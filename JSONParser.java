@@ -10,10 +10,27 @@ import org.json.*;
 public class JSONParser {
 	public static void main(String[] args){
 		//business();
-		users();
+		//users();
+		checkin();
 	}
 	
-	
+	public static void checkin(){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_checkin.json"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				JSONObject obj = new JSONObject(line);
+				String businessId = obj.getString("business_id");
+				JSONObject checkin = obj.getJSONObject("checkin_info");
+				int checkinCount = 0;
+				for(int i = 0; i<checkin.names().length(); i++){
+				    checkinCount += checkin.getInt(checkin.names().getString(i));
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 	public static void users(){
 		try{
