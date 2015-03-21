@@ -9,9 +9,35 @@ import org.json.*;
 
 public class JSONParser {
 	public static void main(String[] args){
-		business();
+		//business();
+		users();
 	}
 	
+	
+	
+	public static void users(){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_user.json"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				JSONObject obj = new JSONObject(line);
+				String user_id = obj.getString("user_id");
+				String name = obj.getString("name");
+				int avgStars = obj.getInt("average_stars");
+				JSONArray eliteArray = obj.getJSONArray("elite");
+		    	String elite = "";
+		    	for(int i=0;i<eliteArray.length();i++){
+		    		if(i == eliteArray.length()-1)
+		    			elite+=eliteArray.get(i);
+		    		else
+		    			elite+=eliteArray.get(i) + ",";
+		    	}
+		    	int fans = obj.getInt("fans");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
 	public static void business() {
 		try {
@@ -33,9 +59,9 @@ public class JSONParser {
 			    	}
 			    	String fullAddress = obj.getString("full_address");
 			    	String city = obj.getString("city");
-			    	boolean o = obj.getBoolean("open");
+			    	boolean openBoolean = obj.getBoolean("open");
 			    	String open = "";
-			    	if(o)
+			    	if(openBoolean)
 			    		open = "true";
 			    	else
 			    		open = "false";
@@ -43,13 +69,13 @@ public class JSONParser {
 			    	int stars = obj.getInt("stars");
 			    	int latitude = obj.getInt("latitude");
 			    	int longitude = obj.getInt("longitude");
-			    	JSONObject h = obj.getJSONObject("hours");
+			    	JSONObject hoursObject = obj.getJSONObject("hours");
 			    	String hours = "";
 			    	JSONObject j = null;
 			    	for(int i=0;i<days.size();i++){
 						if(i == days.size() - 1){
 							try{
-								j = h.getJSONObject(days.get(i));
+								j = hoursObject.getJSONObject(days.get(i));
 								hours += j.getString("open") + ",";
 								hours += j.getString("close");
 							}catch(Exception e){
@@ -59,7 +85,7 @@ public class JSONParser {
 						}
 						else{
 							try{
-								j = h.getJSONObject(days.get(i));
+								j = hoursObject.getJSONObject(days.get(i));
 								hours += j.getString("open") + ",";
 								hours += j.getString("close") + ",";
 							}catch(Exception e){
@@ -68,7 +94,6 @@ public class JSONParser {
 							}
 						}
 			    	}
-			    	System.out.println(hours);
 			    	
 			    }
 		}catch(Exception e){
