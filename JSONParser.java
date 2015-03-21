@@ -11,7 +11,28 @@ public class JSONParser {
 	public static void main(String[] args){
 		//business();
 		//users();
-		checkin();
+		//checkin();
+		businessCategory();
+	}
+	
+	public static void businessCategory(){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
+			String line;
+			while ((line = br.readLine()) != null) {
+		    	JSONObject obj = new JSONObject(line);
+		    	String businessID = obj.getString("business_id");
+		    	JSONArray categoryArray = obj.getJSONArray("categories");
+		    	String category = "";
+		    	for(int i=0;i<categoryArray.length();i++){
+		    			category = categoryArray.getString(i);
+		    			// WRITE SQL QUERY TO ADD (businessID,category) into table
+		    	}
+		    	
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public static void checkin(){
