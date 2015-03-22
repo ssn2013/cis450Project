@@ -103,10 +103,11 @@ public class JSONParser {
 				users(stmt);
 				checkin(stmt);
 				businessCategory(stmt);
-				Elite(stmt);
-				Neighbourhood(stmt);
-				hours(stmt);
-				
+				//Elite(stmt);
+				//Neighbourhood(stmt);
+				//hours(stmt);
+				stmt.close();
+				connection.close();
 		    }catch(Exception e ){
 		    	e.printStackTrace();
 		    }
@@ -251,6 +252,16 @@ public class JSONParser {
 				insert = insert + "\'" + user_id +"\'," + "\'" + name + "\'," + avgStars + "," +fans + ")";
 				//System.out.println(insert);
 				stmt.executeQuery(insert);
+				
+				JSONArray eliteArray = obj.getJSONArray("elite");
+				for(int i=0;i<eliteArray.length();i++){
+						String insert1 = "INSERT into Elite values(";
+						insert1 = insert1 + "\'" + user_id +"\'"+"," + eliteArray.get(i) + ")";
+						//System.out.println(insert);
+						stmt.executeQuery(insert1);
+						//query to add (user_id,eliteArray.get(i)) to elite table;
+				}
+				
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -284,6 +295,50 @@ public class JSONParser {
 					insert = insert + "\'" + id +"\'," + "\'" + name + "\'," + "\'" + fullAddress + "\'," +"\'"+city + "\'," + "\'" + open + "\'," + "\'" + state + "\'," +stars + "," + latitude + "," + longitude + ")";
 					//System.out.println(insert);
 					stmt.executeQuery(insert);
+					
+					JSONArray neighbourhood = obj.getJSONArray("neighborhoods");
+			    	for(int i=0;i<neighbourhood.length();i++){
+			    			// query to add (business_id, neighbourhood.get(i)) to neighbourhood table
+			    		String insert1 = "INSERT into Neighborhood values(";
+						insert1 = insert1 +"\'" + id +"\'"+"," + "\'" + neighbourhood.getString(i).replaceAll("'", "''")+"\'" + ")";
+						//System.out.println(insert);
+						stmt.executeQuery(insert1);
+			    	}
+			    	
+			    	
+			    	
+			    	JSONObject hoursObject = obj.getJSONObject("hours");
+			    	JSONObject j = null;
+			    	for(int i=0;i<days.size();i++){
+							try{
+								j = hoursObject.getJSONObject(days.get(i));
+								//sql query to insert into hours table (id, days.get(i),j.getString("open"),j.getString("close"))
+								String insert2 = "INSERT into BusinessHours values(";
+								insert2 = insert2 + "\'" + id +"\'," + "\'"+days.get(i) + "\'," + "\'" + j.getString("open")+ "\'," +"\'"+j.getString("close")+"\'"+ ")";
+								//System.out.println(insert);
+								stmt.executeQuery(insert2);
+							}catch(Exception e){
+								//sql query to insert into hours table (id, days.get(i),0,0)
+								String insert2 = "INSERT into BusinessHours values(";
+								insert2 = insert2 + "\'" + id +"\'," + "\'" + days.get(i) + "\',\'0\',\'0\'" + ")";
+								//System.out.println(insert);
+								stmt.executeQuery(insert2);
+							}
+						
+			    	}
+			    	
+			    	
+			    	
+			    	JSONArray categoryArray = obj.getJSONArray("categories");
+			    	String category = "";
+			    	for(int i=0;i<categoryArray.length();i++){
+			    			category = categoryArray.getString(i).replaceAll("'", "''");
+			    			// WRITE SQL QUERY TO ADD (businessID,category) into table
+			    			String insert3 = "INSERT into Categories values(";
+							insert3 = insert3 + "\"" + id +"\'," + "\'" + category  + "\'"+ ")";
+							//System.out.println(insert);
+							stmt.executeQuery(insert3);
+			    	}
 			    	
 			 }   			
 		}catch(Exception e){
