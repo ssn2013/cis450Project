@@ -1,4 +1,9 @@
 import java.io.BufferedReader;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.Charset;
@@ -9,10 +14,110 @@ import org.json.*;
 
 public class JSONParser {
 	public static void main(String[] args){
-		//business();
+		/*try { 
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		} catch (ClassNotFoundException e) {
+			System.out.println("Oracle JDBC Driver not present or found");
+			e.printStackTrace();
+			return;
+		}
+		Connection connection = null;
+		try {
+			connection = DriverManager.getConnection("jdbc:oracle:thin:@//cis550hw1.cfoish237b6z.us-west-2.rds.amazonaws.com:1521/IMDB", "cis550students","cis550hw1");
+		} catch (SQLException e) {
+			System.out.println("Connection Failed! Check output console");
+			e.printStackTrace();
+			return;
+		}
+		if (connection != null) {
+			Statement stmt = null;
+		    String createBusiness = "";
+		    String createYelpUsers = "";
+		    String createCheckin = "";
+		    String createBusinessCategory = "";
+		    String createUsers = "";
+		    String createElite = "";
+		    String createNeighbourhood = "";
+		    String createHours = "";	
+		    try {
+		        stmt = connection.createStatement();
+		        stmt.executeQuery(createBusiness);
+		        stmt.executeQuery(createYelpUsers);
+		        stmt.executeQuery(createUsers);
+		        stmt.executeQuery(createCheckin);
+		        stmt.executeQuery(createBusinessCategory);
+		        stmt.excecuteQuery(createElite);
+		        stmt.exceuteQuery(createNeighbourhood);
+		        stmt.executeQuery(createHours);
+		    }catch(Exception e ){
+		    	e.printStackTrace();
+		    }
+		}
+		*/       
+		business();
 		//users();
 		//checkin();
-		businessCategory();
+		//businessCategory();
+	}
+	
+	public static void Elite(){
+		try{
+			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_user.json"));
+			String line;
+			while ((line = br.readLine()) != null) {
+				JSONObject obj = new JSONObject(line);
+				String user_id = obj.getString("user_id");
+				JSONArray eliteArray = obj.getJSONArray("elite");
+				for(int i=0;i<eliteArray.length();i++){
+						//query to add (user_id,eliteArray.get(i)) to elite table;
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public static void Neighbourhood(){
+		try {
+			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
+			 String line;
+			while ((line = br.readLine()) != null) {
+			    	JSONObject obj = new JSONObject(line);
+			    	String id = obj.getString("business_id");
+			    	JSONArray neighbourhood = obj.getJSONArray("neighborhoods");
+			    	for(int i=0;i<neighbourhood.length();i++){
+			    			// query to add (business_id, neighbourhood.get(i)) to neighbourhood table
+			    	}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public static void hours(){
+		try {
+			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
+			 String line;
+			 ArrayList<String> days = new ArrayList<String>();
+			 days.add("Monday");days.add("Tuesday");days.add("Wednesday");days.add("Thursday");days.add("Friday");days.add("Saturday");days.add("Sunday");
+			 while ((line = br.readLine()) != null) {
+			    	JSONObject obj = new JSONObject(line);
+			    	String id = obj.getString("business_id");
+			    	JSONObject hoursObject = obj.getJSONObject("hours");
+			    	JSONObject j = null;
+			    	for(int i=0;i<days.size();i++){
+							try{
+								j = hoursObject.getJSONObject(days.get(i));
+								//sql query to insert into hours table (id, days.get(i),j.getString("open"),j.getString("close"))
+							}catch(Exception e){
+								//sql query to insert into hours table (id, days.get(i),0,0)
+							}
+						
+			    	}
+			 }
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public static void businessCategory(){
@@ -62,14 +167,6 @@ public class JSONParser {
 				String user_id = obj.getString("user_id");
 				String name = obj.getString("name");
 				int avgStars = obj.getInt("average_stars");
-				JSONArray eliteArray = obj.getJSONArray("elite");
-		    	String elite = "";
-		    	for(int i=0;i<eliteArray.length();i++){
-		    		if(i == eliteArray.length()-1)
-		    			elite+=eliteArray.get(i);
-		    		else
-		    			elite+=eliteArray.get(i) + ",";
-		    	}
 		    	int fans = obj.getInt("fans");
 			}
 		}catch(Exception e){
@@ -79,22 +176,14 @@ public class JSONParser {
 	
 	public static void business() {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
+			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
 			 String line;
 			 ArrayList<String> days = new ArrayList<String>();
 			 days.add("Monday");days.add("Tuesday");days.add("Wednesday");days.add("Thursday");days.add("Friday");days.add("Saturday");days.add("Sunday");
-			    while ((line = br.readLine()) != null) {
+			 while ((line = br.readLine()) != null) {
 			    	JSONObject obj = new JSONObject(line);
 			    	String id = obj.getString("business_id");
 			    	String name = obj.getString("name");
-			    	JSONArray neighbourhood = obj.getJSONArray("neighborhoods");
-			    	String n = "";
-			    	for(int i=0;i<neighbourhood.length();i++){
-			    		if(i == neighbourhood.length()-1)
-			    			n+=neighbourhood.get(i);
-			    		else
-			    			n+=neighbourhood.get(i) + ",";
-			    	}
 			    	String fullAddress = obj.getString("full_address");
 			    	String city = obj.getString("city");
 			    	boolean openBoolean = obj.getBoolean("open");
@@ -105,41 +194,13 @@ public class JSONParser {
 			    		open = "false";
 			    	String state = obj.getString("state");
 			    	int stars = obj.getInt("stars");
-			    	int latitude = obj.getInt("latitude");
-			    	int longitude = obj.getInt("longitude");
-			    	JSONObject hoursObject = obj.getJSONObject("hours");
-			    	String hours = "";
-			    	JSONObject j = null;
-			    	for(int i=0;i<days.size();i++){
-						if(i == days.size() - 1){
-							try{
-								j = hoursObject.getJSONObject(days.get(i));
-								hours += j.getString("open") + ",";
-								hours += j.getString("close");
-							}catch(Exception e){
-								hours += "0,";
-								hours += "0";
-							}
-						}
-						else{
-							try{
-								j = hoursObject.getJSONObject(days.get(i));
-								hours += j.getString("open") + ",";
-								hours += j.getString("close") + ",";
-							}catch(Exception e){
-								hours += "0,";
-								hours += "0,";
-							}
-						}
-			    	}
-			    	
-			    }
+			    	Double latitude = (Double)obj.get("latitude");
+			    	Double longitude = (Double)obj.get("longitude");	
+			 }   			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		   
-		
-
 	}
 
 }
