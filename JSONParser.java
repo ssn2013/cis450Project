@@ -14,7 +14,7 @@ import org.json.*;
 
 public class JSONParser {
 	public static void main(String[] args){
-		/*try { 
+		try { 
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 		} catch (ClassNotFoundException e) {
 			System.out.println("Oracle JDBC Driver not present or found");
@@ -46,21 +46,23 @@ public class JSONParser {
 		        stmt.executeQuery(createUsers);
 		        stmt.executeQuery(createCheckin);
 		        stmt.executeQuery(createBusinessCategory);
-		        stmt.excecuteQuery(createElite);
-		        stmt.exceuteQuery(createNeighbourhood);
+		        stmt.executeQuery(createElite);
+		        stmt.executeQuery(createNeighbourhood);
 		        stmt.executeQuery(createHours);
 		    }catch(Exception e ){
 		    	e.printStackTrace();
 		    }
-		}
-		*/       
-		business();
+		}   
+		//business();
 		//users();
 		//checkin();
 		//businessCategory();
+		//Elite();
+		//Neighbourhood();
+		//hours();
 	}
 	
-	public static void Elite(){
+	public static void Elite(Statement stmt){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_user.json"));
 			String line;
@@ -77,7 +79,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void Neighbourhood(){
+	public static void Neighbourhood(Statement stmt){
 		try {
 			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
 			 String line;
@@ -94,7 +96,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void hours(){
+	public static void hours(Statement stmt){
 		try {
 			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
 			 String line;
@@ -120,7 +122,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void businessCategory(){
+	public static void businessCategory(Statement stmt){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
 			String line;
@@ -140,7 +142,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void checkin(){
+	public static void checkin(Statement stmt){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_checkin.json"));
 			String line;
@@ -158,7 +160,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void users(){
+	public static void users(Statement stmt){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_user.json"));
 			String line;
@@ -174,7 +176,7 @@ public class JSONParser {
 		}
 	}
 	
-	public static void business() {
+	public static void business(Statement stmt) {
 		try {
 			 BufferedReader br = new BufferedReader(new FileReader("/Users/Adi/Documents/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json"));
 			 String line;
