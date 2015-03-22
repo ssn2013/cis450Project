@@ -27,6 +27,15 @@ public class LoginServlet extends HttpServlet{
 	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
-		
+		try {
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			//TODO: insert password matching functionality
+			if(username.equals(password)) {
+				response.sendRedirect("main.html");
+			}
+		} catch (Exception e) {
+			
+		}
 	}
 }
