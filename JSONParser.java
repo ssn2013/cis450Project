@@ -23,7 +23,7 @@ public class JSONParser {
 		}
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:oracle:thin:@//158.130.111.68:1521/mydb.localhost", "system","Verna2813");
+			connection = DriverManager.getConnection("jdbc:oracle:thin:@//158.130.111.16:1521/mydb.localhost", "system","Verna2813");
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
@@ -32,10 +32,10 @@ public class JSONParser {
 		if (connection != null) {
 			Statement stmt = null;
 		    String createBusiness = "Create table Business("
-		    		+ "bid varchar(100),"
-		    		+ "name varchar(100),"
+		    		+ "bid varchar(1000),"
+		    		+ "name varchar(1000),"
 		    		+ "full_address varchar(1000),"
-		    		+ "city varchar(25),"
+		    		+ "city varchar(500),"
 		    		+ "open varchar(10),"
 		    		+ "state varchar(100),"
 		    		+ "stars integer,"
@@ -44,45 +44,45 @@ public class JSONParser {
 		    		+ "PRIMARY KEY(bid))";
 		    
 		    String createYelpUsers = "create table YelpUsers("
-		    		+ "user_id varchar(100),"
-		    		+ "name varchar(100),"
+		    		+ "user_id varchar(1000),"
+		    		+ "name varchar(500),"
 		    		+ "avg_stars integer,"
 		    		+ "fans integer,"
 		    		+ "PRIMARY KEY(user_id))";
 		    
 		    String createCheckin = "create table CheckIn("
-		    		+ "bid varchar(100) PRIMARY KEY,"
+		    		+ "bid varchar(1000) PRIMARY KEY,"
 		    		+ "check_in_info integer,"
 		    		+ "FOREIGN KEY (bid) REFERENCES Business(bid) ON DELETE CASCADE)";
 		    
 		    String createBusinessCategory = "Create table Categories("
-		    		+ "bid varchar(100),"
-		    		+ "category varchar(100),"
+		    		+ "bid varchar(1000),"
+		    		+ "category varchar(1000),"
 		    		+ "primary key(bid, category),"
 		    		+ "FOREIGN KEY (bid) REFERENCES Business(bid)  ON DELETE CASCADE)";
 		    
 		    String createUsers = "Create table AppUsers("
-		    		+ "user_id varchar(100),"
-		    		+ "password varchar(100),"
+		    		+ "user_id varchar(1000),"
+		    		+ "password varchar(1000),"
 		    		+ "email varchar(100),"
 		    		+ "is_facebook_login char(1),"
 		    		+ "PRIMARY KEY(user_id))";
 		    
 		    String createElite = "create table Elite("
-		    		+ "user_id varchar(100),"
+		    		+ "user_id varchar(1000),"
 		    		+ "year integer,"
 		    		+ "primary key(user_id, year),"
 		    		+ "foreign key (user_id) references YelpUsers(user_id)  ON DELETE CASCADE)";
 		    
 		    String createNeighbourhood = "create table Neighborhood("
-		    		+ "bid varchar(100),"
-		    		+ "area varchar(100),"
+		    		+ "bid varchar(1000),"
+		    		+ "area varchar(1000),"
 		    		+ "primary key(bid, area), "
 		    		+ "foreign key (bid) references Business(bid)  ON DELETE CASCADE)";
 		    
 		    String createHours = "create table BusinessHours ("
-		    		+ "bid varchar(100),"
-		    		+ "day varchar(20),"
+		    		+ "bid varchar(1000),"
+		    		+ "day varchar(200),"
 		    		+ "open_time varchar(10),"
 		    		+ "close_time varchar(10),"
 		    		+ "primary key(bid, day),"
@@ -90,19 +90,19 @@ public class JSONParser {
 		    
 		    try {
 		        stmt = connection.createStatement();
-		        stmt.executeQuery(createBusiness);
-		        stmt.executeQuery(createYelpUsers);
-		        stmt.executeQuery(createUsers);
+		      //  stmt.executeQuery(createBusiness);
+		      //  stmt.executeQuery(createYelpUsers);
+		      //  stmt.executeQuery(createUsers);
 		        stmt.executeQuery(createCheckin);
-		        stmt.executeQuery(createBusinessCategory);
-		        stmt.executeQuery(createElite);
-		        stmt.executeQuery(createNeighbourhood);
-		        stmt.executeQuery(createHours);
+		      //  stmt.executeQuery(createBusinessCategory);
+		      //  stmt.executeQuery(createElite);
+		      //  stmt.executeQuery(createNeighbourhood);
+		      //  stmt.executeQuery(createHours);
 		        
-		        business(stmt);
-				users(stmt);
+		        //business(stmt);
+				//users(stmt);
 				checkin(stmt);
-				businessCategory(stmt);
+				//businessCategory(stmt);
 				//Elite(stmt);
 				//Neighbourhood(stmt);
 				//hours(stmt);
@@ -245,11 +245,11 @@ public class JSONParser {
 			while ((line = br.readLine()) != null) {
 				JSONObject obj = new JSONObject(line);
 				String user_id = obj.getString("user_id");
-				String name = obj.getString("name").replaceAll("'", "'");
+				String name = obj.getString("name").replaceAll("'", "''");
 				int avgStars = obj.getInt("average_stars");
 		    	int fans = obj.getInt("fans");
 		    	String insert = "INSERT into YelpUsers values(";
-				insert = insert + "\'" + user_id +"\'," + "\'" + name + "\'," + avgStars + "," +fans + ")";
+				insert = insert + "\'" + user_id +"\'," + "\'" + name + "\'," + avgStars + "," +fans + ")";	
 				//System.out.println(insert);
 				stmt.executeQuery(insert);
 				
@@ -335,7 +335,7 @@ public class JSONParser {
 			    			category = categoryArray.getString(i).replaceAll("'", "''");
 			    			// WRITE SQL QUERY TO ADD (businessID,category) into table
 			    			String insert3 = "INSERT into Categories values(";
-							insert3 = insert3 + "\"" + id +"\'," + "\'" + category  + "\'"+ ")";
+							insert3 = insert3 + "\'" + id +"\'," + "\'" + category  + "\'"+ ")";
 							//System.out.println(insert);
 							stmt.executeQuery(insert3);
 			    	}
