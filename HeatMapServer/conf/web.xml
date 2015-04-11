@@ -45,6 +45,10 @@
      <servlet-name>AddUser</servlet-name>
      <url-pattern>/register</url-pattern>
    </servlet-mapping>  
+   <servlet-mapping>
+     <servlet-name>AddUser</servlet-name>
+     <url-pattern>/register</url-pattern>
+   </servlet-mapping>  
 
    <!-- add any additional servlets and servlet mappings here -->
 
