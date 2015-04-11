@@ -25,7 +25,7 @@ public class OracleDBWrapper {
 		
 			try {
 				conn = DriverManager.getConnection(url,
-						"cis550students", "cis550hw1");
+						user, pwd);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
