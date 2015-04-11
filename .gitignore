@@ -1,0 +1,4 @@
+HeatMapServer/bin
+HeatMapServer/target/
+HeatMapServer/.classpath
+HeatMapServer/deploy.sh
