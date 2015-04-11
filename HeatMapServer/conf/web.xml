@@ -11,6 +11,10 @@
      <servlet-name>LoginServlet</servlet-name>
      <servlet-class>com.datformers.servlet.LoginServlet</servlet-class> 
    </servlet>
+   <servlet>
+     <servlet-name>AddUser</servlet-name>
+     <servlet-class>com.datformers.servlet.addAppUser</servlet-class> 
+   </servlet>
     
    <servlet-mapping>
      <servlet-name>LoginServlet</servlet-name>
@@ -36,6 +40,11 @@
      <servlet-name>HeatMap</servlet-name>
      <url-pattern>/heat</url-pattern>
    </servlet-mapping> 
+
+   <servlet-mapping>
+     <servlet-name>AddUser</servlet-name>
+     <url-pattern>/register</url-pattern>
+   </servlet-mapping>  
 
    <!-- add any additional servlets and servlet mappings here -->
 

@@ -1,4 +1,8 @@
 <html>
+<style>
+body {background-color:lightgray}
+  table  {color:blue}
+</style>
 <body>
 <form method="post" action="login">
 <table>
@@ -11,7 +15,9 @@
 		<td><input type="password" name="password"/></td>
 	</tr>
 	<tr>
-		<td colspan="2"><input type="submit" value="Submit"/></td>
+		<td colspan="2"><input name="login" type="submit" value="Login"/></td>
+		<td colspan="2"><input name="register" type="submit" value="Register"/></td>
+		
 	</tr>
 </table>
 </form>
