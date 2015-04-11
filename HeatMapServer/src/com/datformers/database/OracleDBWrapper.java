@@ -1,9 +1,5 @@
 package com.datformers.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.*;
 
 
@@ -24,9 +20,10 @@ public class OracleDBWrapper {
 	public void createConnection() {
 		
 			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
 				conn = DriverManager.getConnection(url,
 						user, pwd);
-			} catch (SQLException e) {
+			} catch (SQLException | ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
