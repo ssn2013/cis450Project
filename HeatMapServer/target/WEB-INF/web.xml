@@ -15,7 +15,27 @@
    <servlet-mapping>
      <servlet-name>LoginServlet</servlet-name>
      <url-pattern>/login</url-pattern>
-   </servlet-mapping>  
+   </servlet-mapping>
+   
+   <servlet>
+     <servlet-name>HeatMapServlet</servlet-name>
+     <servlet-class>com.datformers.servlet.HeatMapServlet</servlet-class> 
+   </servlet>
+    
+   <servlet-mapping>
+     <servlet-name>HeatMapServlet</servlet-name>
+     <url-pattern>/heatmap/*</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+     <servlet-name>HeatMap</servlet-name>
+     <jsp-file>/heatmap.jsp</jsp-file> 
+   </servlet>
+    
+   <servlet-mapping>
+     <servlet-name>HeatMap</servlet-name>
+     <url-pattern>/heat</url-pattern>
+   </servlet-mapping> 
 
    <!-- add any additional servlets and servlet mappings here -->
 
