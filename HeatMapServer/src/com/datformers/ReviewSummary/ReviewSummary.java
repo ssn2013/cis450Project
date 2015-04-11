@@ -1,4 +1,4 @@
-package ReviewSummary;
+package com.datformers.ReviewSummary;
 import java.util.ArrayList;
 import com.datformers.database.*;
 
