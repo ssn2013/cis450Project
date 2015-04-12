@@ -1,5 +1,6 @@
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="com.datformers.database.OracleDBWrapper,com.datformers.utils.DatabaseUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 
@@ -88,12 +89,9 @@ function initialize() {
 }
 
 function reloadMap() {
-alert("Got into function");
 var xmlhttp;
 var cityVal = document.getElementById("citySelect").value;
-alert("Got city value: "+cityVal);
 var categoryVal = document.getElementById("categorySelect").value;
-alert("Got category value: "+categoryVal);
 xmlhttp=new XMLHttpRequest();
 url="heatmap/points1?city="+cityVal+"&category="+categoryVal;
 alert("Calling url: "+url);
@@ -122,32 +120,12 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 <!--This is a comment. Comments are not displayed in the browser-->
 <% 
-java.sql.Connection conn = null;
-java.sql.Statement stmtCity = null;
-java.sql.Statement stmtCategory = null;
-java.sql.ResultSet rsCity = null;
-java.sql.ResultSet rsCategory = null;
-java.sql.PreparedStatement pst = null;
-
-// Remember to change the next line with your own environment 
-String url= "jdbc:oracle:thin:@//158.130.106.114:1521/mydb.localhost";
-String id= "SYSTEM";
-String pass = "Verna2813";
+OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
+String queryCity = "select distinct city from business order by city";
+String queryCategory = "select distinct category from categories order by category";
+java.sql.ResultSet rsCity = dbWrapper.executeQuery(queryCity);
+java.sql.ResultSet rsCategory = dbWrapper.executeQuery(queryCategory); 
 try{
-
-Class.forName("oracle.jdbc.driver.OracleDriver");
-conn = java.sql.DriverManager.getConnection(url, id, pass);
-
-}catch(ClassNotFoundException e){
-e.printStackTrace();
-}
-String queryCity = "select distinct city from business";
-String queryCategory = "select distinct category from categories"; 
-try{
-stmtCity = conn.createStatement();
-rsCity = stmtCity.executeQuery(queryCity);
-stmtCategory = conn.createStatement();
-rsCategory = stmtCategory.executeQuery(queryCategory);
 %>
 <div id="ajaxResponse">Content to be changed</div>
 <div>
@@ -171,9 +149,7 @@ catch(Exception e){e.printStackTrace();}
 finally{
 if(rsCity!=null) rsCity.close();
 if(rsCategory!=null) rsCategory.close();
-if(stmtCity!=null) stmtCity.close();
-if(stmtCategory!=null) stmtCategory.close();
-if(conn!=null) conn.close();
+dbWrapper.closeConnection();
 }
 %>
 </tr>
