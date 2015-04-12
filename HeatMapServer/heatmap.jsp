@@ -121,8 +121,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
 <!--This is a comment. Comments are not displayed in the browser-->
 <% 
 OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
-String queryCity = "select distinct city from business";
-String queryCategory = "select distinct category from categories";
+String queryCity = "select distinct city from business order by city";
+String queryCategory = "select distinct category from categories order by category";
 java.sql.ResultSet rsCity = dbWrapper.executeQuery(queryCity);
 java.sql.ResultSet rsCategory = dbWrapper.executeQuery(queryCategory); 
 try{
