@@ -25,7 +25,10 @@ public class HeatMapServlet extends HttpServlet {
 			String city = request.getParameter("city");
 			String category = request.getParameter("category");
 			System.out.println("Got request for: "+city+" and category: "+category);
-			String queryString = "select latitude, longitude from business where city='Pittsburgh'";
+			//String queryString = "select latitude, longitude from business where city='Pittsburgh'";
+			String queryString ="select  distinct business.latitude, business.longitude "
+					+"from business inner join categories on categories.bid = business.bid " 
+					+"where business.city='"+city+"' and categories.category='"+category+"'";
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			if(set==null) {
 				System.out.println("AHHHH>");
@@ -36,7 +39,7 @@ public class HeatMapServlet extends HttpServlet {
 			JSONArray array = new JSONArray();
 			int count = 0;
 			try {
-				while(set.next() && count++<5) {
+				while(set.next()) {
 					JSONObject obj = new JSONObject();
 					obj.put(keys[0], set.getDouble(keys[0]));
 					obj.put(keys[1], set.getDouble(keys[1]));
