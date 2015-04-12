@@ -72,7 +72,7 @@ function initialize() {
   var mapOptions = {
     zoom: 13,
     center: new google.maps.LatLng(37.774546, -122.433523),
-    mapTypeId: google.maps.MapTypeId.SATELLITE
+    mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
   map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -88,17 +88,22 @@ function initialize() {
 }
 
 function reloadMap() {
+alert("Got into function");
 var xmlhttp;
 var cityVal = document.getElementById("citySelect").value;
+alert("Got city value: "+cityVal);
+var categoryVal = document.getElementById("categorySelect").value;
+alert("Got category value: "+categoryVal);
 xmlhttp=new XMLHttpRequest();
-url="heatmap/points?city="+cityVal
+url="heatmap/points1?city="+cityVal+"&category="+categoryVal;
+alert("Calling url: "+url);
 xmlhttp.onreadystatechange=function()
 {
 if (xmlhttp.readyState==4 && xmlhttp.status==200)
 {
 	//document.getElementById("ajaxResponse").innerHTML=xmlhttp.responseText;
 	var responseObj = JSON.parse(xmlhttp.responseText); 
-	alert("Got response from server for Change Map for city: "+responseObj.city);
+	alert("Got response from server for Change Map for city: "+responseObj.city+" and category: "+responseObj.category);
 	var pointsArray = responseObj.points;
 	var newMapPointsArray = new Array(pointsArray.length);
 	for (i = 0; i < pointsArray.length; i++) { 
@@ -114,10 +119,64 @@ xmlhttp.send();
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
 <body>
-<div id="ajaxResponse">Content to be changed
-</div>
+
+<!--This is a comment. Comments are not displayed in the browser-->
+<% 
+java.sql.Connection conn = null;
+java.sql.Statement stmtCity = null;
+java.sql.Statement stmtCategory = null;
+java.sql.ResultSet rsCity = null;
+java.sql.ResultSet rsCategory = null;
+java.sql.PreparedStatement pst = null;
+
+// Remember to change the next line with your own environment 
+String url= "jdbc:oracle:thin:@//158.130.106.114:1521/mydb.localhost";
+String id= "SYSTEM";
+String pass = "Verna2813";
+try{
+
+Class.forName("oracle.jdbc.driver.OracleDriver");
+conn = java.sql.DriverManager.getConnection(url, id, pass);
+
+}catch(ClassNotFoundException e){
+e.printStackTrace();
+}
+String queryCity = "select distinct city from business";
+String queryCategory = "select distinct category from categories"; 
+try{
+stmtCity = conn.createStatement();
+rsCity = stmtCity.executeQuery(queryCity);
+stmtCategory = conn.createStatement();
+rsCategory = stmtCategory.executeQuery(queryCategory);
+%>
+<div id="ajaxResponse">Content to be changed</div>
 <div>
-<table><tr><td>City:</td><td></td></tr><tr><td>Category:</td><td><select id="citySelect"><option value="A">A</option><option value="B">B</option></td></tr>
+<table><tr><td>City:</td><td><select id="citySelect">
+<% while(rsCity.next()){ %>
+<option value="<%= rsCity.getString("city") %>"><%= rsCity.getString("city") %></option>
+<% } %>
+</select></td></tr>
+<tr><td>Category:</td><td><select id="categorySelect">
+<%
+while(rsCategory.next()){
+%>
+<option value="<%= rsCategory.getString("category") %>"><%= rsCategory.getString("category") %></option>
+<%
+}
+%>
+</select></td>
+<%
+}
+catch(Exception e){e.printStackTrace();}
+finally{
+if(rsCity!=null) rsCity.close();
+if(rsCategory!=null) rsCategory.close();
+if(stmtCity!=null) stmtCity.close();
+if(stmtCategory!=null) stmtCategory.close();
+if(conn!=null) conn.close();
+}
+%>
+</tr>
 <tr><td colspan="2"><button type="button" onclick="testAjax()">Change Content</button>
 </td></tr>
 <tr><td colspan="2"><button type="button" onclick="reloadMap()">Reload Map</button>
