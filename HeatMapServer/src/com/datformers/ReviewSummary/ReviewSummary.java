@@ -16,6 +16,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
+import com.datformers.utils.DatabaseUtil;
 
 public class ReviewSummary {
 
@@ -33,7 +34,7 @@ public class ReviewSummary {
 	public String getSummary() {
 		try {
 
-			MongoDBWrapper mdb = new MongoDBWrapper("158.130.106.114", 27017,
+			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
 					"Reviews");
 			mdb.createConnection();
 			

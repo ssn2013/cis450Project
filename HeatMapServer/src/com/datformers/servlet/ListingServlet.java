@@ -22,7 +22,7 @@ import com.mongodb.DBObject;
 
 public class ListingServlet extends HttpServlet {
 	private OracleDBWrapper dbWrapper = new OracleDBWrapper(
-			DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,
+			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
 			DatabaseUtil.PASSWORD);
 
 	@Override
@@ -52,7 +52,7 @@ public class ListingServlet extends HttpServlet {
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
 
-		MongoDBWrapper mdb = new MongoDBWrapper("158.130.106.114", 27017,
+		MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
 				"Reviews");
 		mdb.createConnection();
 
