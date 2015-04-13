@@ -18,6 +18,16 @@
    </servlet-mapping>
    
    <servlet>
+     <servlet-name>ListingServlet</servlet-name>
+     <servlet-class>com.datformers.servlet.ListingServlet</servlet-class> 
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ListingServlet</servlet-name>
+     <url-pattern>/heatmap/list</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
      <servlet-name>AddUser</servlet-name>
      <servlet-class>com.datformers.servlet.addAppUser</servlet-class> 
    </servlet>
