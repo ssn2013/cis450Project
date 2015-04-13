@@ -1,5 +1,8 @@
 package com.datformers.ReviewSummary;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.datformers.database.*;
 
 import org.json.JSONArray;
@@ -28,16 +31,16 @@ public class ReviewSummary {
 
 	public ReviewSummary(String businessID, int numS) {
 		this.businessID = businessID;
-		this.numSentence=numS;
+		this.numSentence = numS;
 	}
 
-	public String getSummary() {
+	public HashMap<String, ArrayList<String>> getReviews() {
+		ArrayList<String> reviews = new ArrayList<String>();
 		try {
 
 			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
 					"Reviews");
 			mdb.createConnection();
-			
 
 			BasicDBObject Query = new BasicDBObject();
 			Query.put("business_id", this.businessID);
@@ -48,29 +51,52 @@ public class ReviewSummary {
 			res = mdb.executeQuery(Query, fields);
 			for (int i = 0; i < res.size(); i++) {
 				DBObject current = res.get(i);
+				reviews.add("" + current.get("text"));
 				combinedReviews += current.get("text");
 			}
-			HttpResponse<JsonNode> response = Unirest
+			mdb.closeConnection();
+			HashMap<String, ArrayList<String>> ret = new HashMap<String, ArrayList<String>>();
+			ret.put(combinedReviews, reviews);
+			
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public String getSummary(String combinedReviews) {
+
+		HttpResponse<JsonNode> response = null;
+		try {
+			response = Unirest
 					.post("https://textanalysis-text-summarization.p.mashape.com/text-summarizer-text")
 					.header("X-Mashape-Key",
 							"R0dFC6DHl7mshuf0EkDrDsxBclyNp1L73K5jsnPNZnzOFKJWO3")
 					.header("Content-Type", "application/x-www-form-urlencoded")
-					.header("Accept", "application/json").field("sentnum", this.numSentence)
+					.header("Accept", "application/json")
+					.field("sentnum", this.numSentence)
 					.field("text", combinedReviews).asJson();
-			JsonNode summary = response.getBody();
+		} catch (UnirestException e) {
 
-			JSONArray summaryArray = summary.getObject().getJSONArray(
-					"sentences");
-			for (int i = 0; i < summaryArray.length(); i++) {
-				this.summary += summaryArray.get(i)+". ";
-			}
-			mdb.closeConnection();
-		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		JsonNode summ = response.getBody();
+
+		JSONArray summaryArray;
+		try {
+			summaryArray = summ.getObject().getJSONArray("sentences");
+			for (int i = 0; i < summaryArray.length(); i++) {
+				this.summary += summaryArray.get(i) + ". ";
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
 		return summary;
 
 	}
-
 }
+
+
+

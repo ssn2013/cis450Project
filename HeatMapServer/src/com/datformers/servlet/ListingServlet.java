@@ -25,9 +25,10 @@ public class ListingServlet extends HttpServlet {
 			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
 			DatabaseUtil.PASSWORD);
 
+	
+	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println(System.currentTimeMillis());
 		String city = "";
 		String category = "";
 		String bid = "";

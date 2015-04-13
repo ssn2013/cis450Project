@@ -24,7 +24,17 @@
    
    <servlet-mapping>
      <servlet-name>ListingServlet</servlet-name>
-     <url-pattern>/heatmap/list</url-pattern>
+     <url-pattern>/list</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+     <servlet-name>DetailsServlet</servlet-name>
+     <servlet-class>com.datformers.servlet.Details</servlet-class> 
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>DetailsServlet</servlet-name>
+     <url-pattern>/details</url-pattern>
    </servlet-mapping>
    
    <servlet>
