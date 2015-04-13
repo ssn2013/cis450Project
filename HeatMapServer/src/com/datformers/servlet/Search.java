@@ -33,7 +33,8 @@ public class Search extends HttpServlet{
 			arr.put(obj);
 		}
 		main.put("result", arr);
-		System.out.println(main.toString());
+		response.setContentType("application/json");
+		response.getWriter().println(main.toString());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
