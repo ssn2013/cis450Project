@@ -110,6 +110,11 @@ public class MongoDBWrapper {
 	    }
 	 return ret_value;
 	}
+	
+	public  DBObject executeQueryFirst(BasicDBObject Query,BasicDBObject fields) {
+		 DBObject cursor = reviews.findOne(Query, fields);
+		 return cursor;
+	}
 	public void deleteReview(String reviewID) {
 		BasicDBObject document = new BasicDBObject("review_id",reviewID);
 		

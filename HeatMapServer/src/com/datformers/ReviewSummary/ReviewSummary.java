@@ -52,7 +52,7 @@ public class ReviewSummary {
 			HttpResponse<JsonNode> response = Unirest
 					.post("https://textanalysis-text-summarization.p.mashape.com/text-summarizer-text")
 					.header("X-Mashape-Key",
-							"4153kk3FIomshq0GZ7oIM9SriGcGp1MFdjejsnh6bOl5o3bowA")
+							"R0dFC6DHl7mshuf0EkDrDsxBclyNp1L73K5jsnPNZnzOFKJWO3")
 					.header("Content-Type", "application/x-www-form-urlencoded")
 					.header("Accept", "application/json").field("sentnum", this.numSentence)
 					.field("text", combinedReviews).asJson();
