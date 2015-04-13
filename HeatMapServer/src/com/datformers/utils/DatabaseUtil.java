@@ -2,7 +2,7 @@ package com.datformers.utils;
 
 public class DatabaseUtil {
 	private static String URL;
-	public static String IP="158.130.109.195";
+	public static String IP="158.130.161.205";
 	public static String UERNAME = "SYSTEM";
 	public static String PASSWORD = "Verna2813";
 	public static String getURL(String ip) {
