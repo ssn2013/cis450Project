@@ -33,7 +33,7 @@ public class ListingServlet extends HttpServlet{
 		
 		String queryString ="select * "
 				+"from business inner join categories on categories.bid = business.bid " 
-				+"where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM < 5";
+				+"where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM < 20";
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
 		
