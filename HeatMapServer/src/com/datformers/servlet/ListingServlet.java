@@ -20,64 +20,59 @@ import com.datformers.utils.DatabaseUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-public class ListingServlet extends HttpServlet{
-	private OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
-	
-	
+public class ListingServlet extends HttpServlet {
+	private OracleDBWrapper dbWrapper = new OracleDBWrapper(
+			DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,
+			DatabaseUtil.PASSWORD);
+
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response){
-		String city="";
-		String category="";
+	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		String city = "";
+		String category = "";
 		String bid = "";
 		String review = "";
-		String businessName="";
-		String address="";
+		String businessName = "";
+		String address = "";
 		String stars = "";
-		String open="";
-		int startIndex=1;
+		String open = "";
+		int startIndex = 1;
 		int endIndex = 0;
 		ArrayList<DBObject> res = new ArrayList<DBObject>();
 		city = request.getParameter("city");
-		category= request.getParameter("category");
-		startIndex=Integer.parseInt(request.getParameter("index"));
-		endIndex=startIndex+5;
-		
-		String queryString ="select * "
-				+"from business inner join categories on categories.bid = business.bid " 
-				+"where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM >= "+startIndex+ "and ROWNUM < "+endIndex;
+		category = request.getParameter("category");
+		startIndex = Integer.parseInt(request.getParameter("index"));
+		endIndex = startIndex + 5;
+
+		String queryString = "select * "
+				+ "from business inner join categories on categories.bid = business.bid "
+				+ "where business.city='" + city
+				+ "' and categories.category='" + category + "' and ROWNUM >= "
+				+ startIndex + "and ROWNUM < " + endIndex;
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
-		
+
 		MongoDBWrapper mdb = new MongoDBWrapper("158.130.106.114", 27017,
 				"Reviews");
 		mdb.createConnection();
-		
 
-		
-
-		
-
-		
 		try {
-			while(set.next()) {
-				bid=set.getString("bid");
+			while (set.next()) {
+				bid = set.getString("bid");
 				businessName = set.getString("name");
 				stars = set.getString("stars");
-				address=set.getString("full_address");
-				open=set.getString("open");
+				address = set.getString("full_address");
+				open = set.getString("open");
 				BasicDBObject Query = new BasicDBObject();
 				Query.put("business_id", bid);
 				BasicDBObject fields = new BasicDBObject();
 				fields.put("text", 1);
 				res = mdb.executeQuery(Query, fields);
-				for (int i = 0; i < res.size(); i++) {
+				for (int i = 0; i < 1; i++) {
 					DBObject current = res.get(i);
-					if(String.valueOf(current.get("text")).length() < 70){
-						review = String.valueOf(current.get("text"));
-						break;
-					}
+					review = String.valueOf(current.get("text"));
+
 				}
-				
+				System.out.println(review + "hi");
 				JSONObject jo = new JSONObject();
 				jo.put("bid", bid);
 				jo.put("name", businessName);
@@ -87,18 +82,17 @@ public class ListingServlet extends HttpServlet{
 				jo.put("review", review);
 				ja.add(jo);
 			}
-			
+
 			JSONObject mainObj = new JSONObject();
 			mainObj.put("items", ja);
 			response.setContentType("application/json");
 			response.getWriter().println(mainObj.toString());
-			
+
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
-			System.out.println("Heat map Servlet: "+e.getMessage());
+			System.out.println("Heat map Servlet: " + e.getMessage());
 		}
-		
-		
+
 	}
 
 }
