@@ -49,6 +49,7 @@ public class LoginServlet extends HttpServlet {
 				System.out.println(query);
 				tmp = new AddAppUser(query);
 				ResultSet res = tmp.addUser();
+				
 				if (res.next()) {
 					isValidPwd = res.getString("password");
 				}
@@ -56,9 +57,11 @@ public class LoginServlet extends HttpServlet {
 					out.println("<html><head><body><h3>Login Success!!</h3></body></head>");
 
 				} else {
-					// System.out.println("Login Failed!!");
+					System.out.println("Login Failed!!");
 					out.println("<html><head><body><h3>Invalid credentials!!</h3></body></head>");
 				}
+				tmp.closeDb();
+			
 
 			}
 			if (request.getParameter("register") != null) {
@@ -94,7 +97,8 @@ public class LoginServlet extends HttpServlet {
 					if (res.next()) {
 						count = res.getInt("cnt");
 					}
-
+					
+					add.closeDb();
 					System.out.println("Signup query" + query);
 					if (count > 0) {
 						// System.out.println("Already Registered");
@@ -115,6 +119,7 @@ public class LoginServlet extends HttpServlet {
 						// System.out.println(query1);
 						AddAppUser tmp = new AddAppUser(query1);
 						tmp.addUser();
+						tmp.closeDb();
 						out.println("<html><head><body><h3>Registration Successful!</h3></body></head>");
 					}
 				}

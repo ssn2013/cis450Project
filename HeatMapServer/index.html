@@ -1,25 +1,187 @@
+<!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html>
-<style>
-body {background-color:lightgray}
-  table  {color:blue}
-</style>
-<body>
-<form method="post" action="login">
-<table>
-	<tr>
-		<td>Username: </td>
-		<td><input type="text" name="username"/></td>
-	</tr>
-	<tr>
-		<td>Password: </td>
-		<td><input type="password" name="password"/></td>
-	</tr>
-	<tr>
-		<td colspan="2"><input name="login" type="submit" value="Login"/></td>
-		<td colspan="2"><input name="register" type="submit" value="Register"/></td>
+	<head>
+		<title>Prologue by HTML5 UP</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		--<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.scrolly.min.js"></script>
+		<!--<script src="js/jquery.scrollzer.min.js"></script>-->
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-wide.css" />
+		</noscript>
+		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<div id="header" class="skel-layers-fixed">
+
+				<div class="top">
+
+					<!-- Logo -->
+						<div id="logo">
+							<span class="image avatar48"><img src="images/Hyperspace" alt="" /></span>
+							<h1 id="title">DATFORMERS</h1><br\>
+							<p>Adarsh,Aryaa,Deepak,Sruthi</p>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<!--
+							
+								Prologue's nav expects links in one of two formats:
+								
+								1. Hash link (scrolls to a different section within the page)
+								
+								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
+
+								2. Standard link (sends the user to another page/site)
+
+								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
+							
+							-->
+							<ul>
+								<li><a href="#top" id="top-link" class="skel-layers-ignoreHref"><span class="icon fa-home">Login</span></a></li>
+								<li><a href="#portfolio" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-facebook">Register/Facebook Login</span></a></li>
+								<li><a href="#about" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-th">About Us</span></a></li>
+								
+
+							</ul>
+						</nav>
+						
+				</div>
+				
+				<div class="bottom">
+
+					<!-- Social Icons -->
+						<ul class="icons">
+							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+				
+				</div>
+			
+			</div>
+
+		<!-- Main -->
+		<section id="top" class="one dark cover">
+
+			
+			<div class="top-searchbar" align="center">
+					<form>
+						<input type="text" onfocus="this.value = this.value=='Bing search'?'':this.value;" onblur="this.value = this.value==''?'Bing search':this.value;"/>
+						<input type="submit" src="images/pic02.jpg"value="Search" />
+						
+					</form>
+
+			</div>
+				
+									
+				
+			
+		</section>
+			<div id="main">
+
+				
+				<!-- Intro -->
+					<section id="top" class="one dark cover">
+						<div class="container">
+
+							<form method="post" action="login">
+							<table>
+							<tr>
+							<td>Username: </td>
+							<td><input type="text" name="username"/></td>
+							</tr>
+							<tr>
+							<td>Password: </td>
+							<td><input type="password" name="password"/></td>
+							</tr>
+							<tr>
+							<td colspan="2"><input name="login" type="submit" value="Login" />
+							<input name="register" type="submit" value="Register" /></td>
 		
-	</tr>
-</table>
-</form>
-</body>
+							</tr>
+							</table>
+							</form>
+
+						</div>
+					</section>
+					
+				<!-- Register -->
+					<section id="portfolio" class="two">
+							<div class="container">
+
+							<form method="post" action="login">
+							<table>
+							<tr>
+							<td>First Name: </td>
+							<td><input type="text" name="firstname"/></td>
+							</tr>
+							<tr>
+							<td>Last Name: </td>
+							<td><input type="text" name="lastname"/></td>
+							</tr>
+							<tr>
+							<td>Email ID: </td>
+							<td><input type="text" name="email"/></td>
+							</tr>
+							<tr>
+							<td>Password: </td>
+							<td><input type="password" name="password"/></td>
+							</tr>
+						
+							<tr>
+							<td colspan="2"><input name="register" type="submit" value="Register" /></td>
+		
+							</tr>
+							</table>
+							</form>
+
+						</div>
+						<div>
+
+						</div>
+					</section>
+
+
+					<section id="about" class="three">
+							<div class="container">
+								<header>
+									<h2> About Us</h2>
+								</header>
+							
+								<a href="#" class="image avatar49"><img src="images/adarsh.jpg"  alt="" />Adarsh</a>
+								<a href="#" class="image avatar49"><img src="images/aryaa.jpg"  alt="" />Aryaa</a>
+								<a href="#" class="image avatar49"><img src="images/deepak.jpg" alt="" />Deepak</a>
+								<a href="#" class="image avatar49"><img src="images/sruthi.jpg" alt="" />Sruthi</a>
+							
+							
+							</div>
+							</section>
+						
+					</section>
+
+				
+
+		
+
+	</body>
 </html>

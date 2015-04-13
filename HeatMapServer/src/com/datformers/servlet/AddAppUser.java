@@ -8,17 +8,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.datformers.database.OracleDBWrapper;
+import com.datformers.utils.DatabaseUtil;
+
 
 public class AddAppUser {
 	String query = "";
-	
+	OracleDBWrapper wrapper;
+
 	AddAppUser(String str){
 		query = str;
+		wrapper = new OracleDBWrapper(DatabaseUtil.getURL(""), DatabaseUtil.UERNAME, DatabaseUtil.PASSWORD);
 	}
 	public ResultSet addUser(){
 		
-		OracleDBWrapper wrapper = new OracleDBWrapper
-				("jdbc:oracle:thin:@//158.130.106.114:1521/mydb.localhost","SYSTEM","Verna2813");
+	
 		String query1 = "Insert into APPUSER(USER_ID,EMAIL,PASSWORD,FIRST_NAME,LAST_NAME,IS_FACEBOOK_LOGIN)"
 				+ " values (usr_id.NEXTVAL,'aryaa@seas.upenn.edu','test','ARyaa','Gautam','Y')";
 		
@@ -26,6 +29,9 @@ public class AddAppUser {
 		return rs;
 		
 		
+	}
+	public void closeDb(){
+		wrapper.closeConnection();
 	}
 	
 }
