@@ -54,7 +54,8 @@ public class LoginServlet extends HttpServlet {
 					isValidPwd = res.getString("password");
 				}
 				if (password.equals(isValidPwd)) {
-					out.println("<html><head><body><h3>Login Success!!</h3></body></head>");
+					//out.println("<html><head><body><h3>Login Success!!</h3></body></head>");
+					response.sendRedirect("main.html");
 
 				} else {
 					System.out.println("Login Failed!!");
