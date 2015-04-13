@@ -27,6 +27,7 @@ public class ListingServlet extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println(System.currentTimeMillis());
 		String city = "";
 		String category = "";
 		String bid = "";
@@ -37,7 +38,7 @@ public class ListingServlet extends HttpServlet {
 		String open = "";
 		int startIndex = 1;
 		int endIndex = 0;
-		ArrayList<DBObject> res = new ArrayList<DBObject>();
+		DBObject res;
 		city = request.getParameter("city");
 		category = request.getParameter("category");
 		startIndex = Integer.parseInt(request.getParameter("index"));
@@ -66,13 +67,9 @@ public class ListingServlet extends HttpServlet {
 				Query.put("business_id", bid);
 				BasicDBObject fields = new BasicDBObject();
 				fields.put("text", 1);
-				res = mdb.executeQuery(Query, fields);
-				for (int i = 0; i < 1; i++) {
-					DBObject current = res.get(i);
-					review = String.valueOf(current.get("text"));
-
-				}
-				System.out.println(review + "hi");
+				res = mdb.executeQueryFirst(Query, fields);
+				review = String.valueOf(res.get("text"));
+					
 				JSONObject jo = new JSONObject();
 				jo.put("bid", bid);
 				jo.put("name", businessName);
@@ -82,11 +79,11 @@ public class ListingServlet extends HttpServlet {
 				jo.put("review", review);
 				ja.add(jo);
 			}
-
 			JSONObject mainObj = new JSONObject();
 			mainObj.put("items", ja);
 			response.setContentType("application/json");
 			response.getWriter().println(mainObj.toString());
+			mdb.closeConnection();
 
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
