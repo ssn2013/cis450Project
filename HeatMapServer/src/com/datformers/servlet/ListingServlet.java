@@ -28,12 +28,16 @@ public class ListingServlet extends HttpServlet{
 		String summary = "";
 		String businessName="";
 		String stars = "";
+		int startIndex=1;
+		int endIndex = 0;
 		city = request.getParameter("city");
 		category= request.getParameter("category");
+		startIndex=Integer.parseInt(request.getParameter("index"));
+		endIndex=startIndex+5;
 		
 		String queryString ="select * "
 				+"from business inner join categories on categories.bid = business.bid " 
-				+"where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM < 20";
+				+"where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM >= "+startIndex+ "and ROWNUM < "+endIndex;
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
 		
@@ -42,7 +46,6 @@ public class ListingServlet extends HttpServlet{
 				bid=set.getString("bid");
 				ReviewSummary sum = new ReviewSummary(bid, 3);
 				summary = sum.getSummary();
-				
 				businessName = set.getString("name");
 				stars = set.getString("stars");
 				
@@ -59,11 +62,9 @@ public class ListingServlet extends HttpServlet{
 			response.setContentType("application/json");
 			response.getWriter().println(mainObj.toString());
 			
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			System.out.println("Heat map Servlet: "+e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		
