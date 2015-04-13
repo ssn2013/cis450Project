@@ -72,6 +72,9 @@
                 <include name="**/*.js"/>
                 <include name="**/*.css"/>
                 <include name="**/*.jsp"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.jpeg"/>
+                <include name="**/*.png"/>
             </fileset>
         </copy>
         <jar destfile="heatmapserver.war" update="true">
@@ -82,6 +85,9 @@
                 <include name="**/*.js"/>
                 <include name="**/*.css"/>
                 <include name="**/*.jsp"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.jpeg"/>
+                <include name="**/*.png"/>
                 <include name="WEB-INF/web.xml"/>
             </fileset>
         </jar>
