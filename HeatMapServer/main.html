@@ -4,6 +4,13 @@
 	html5up.net | @n33co
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
+
+<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="javax.servlet.http.*,javax.servlet.*"%>
+<%@ page import="com.datformers.database.OracleDBWrapper,com.datformers.utils.DatabaseUtil"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
+
 <html>
 	<head>
 		<title>Prologue by HTML5 UP</title>
@@ -32,6 +39,116 @@
     $( "#tabs" ).tabs();
   });
   </script>
+  
+<style>
+	#tabs-heat {
+	height: 500px;
+	margin: 0px;
+	padding: 0px
+}
+</style>
+  <script
+	src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+  <script>
+  	var map, pointarray, heatmap;
+	var taxiData = [ new google.maps.LatLng(37.782551, -122.445368),
+			new google.maps.LatLng(37.782745, -122.444586),
+			new google.maps.LatLng(37.782842, -122.443688),
+			new google.maps.LatLng(37.782919, -122.442815),
+			new google.maps.LatLng(37.782992, -122.442112),
+			new google.maps.LatLng(37.783100, -122.441461),
+			new google.maps.LatLng(37.783206, -122.440829),
+			new google.maps.LatLng(37.783273, -122.440324),
+			new google.maps.LatLng(37.783316, -122.440023),
+			new google.maps.LatLng(37.783357, -122.439794),
+			new google.maps.LatLng(37.783371, -122.439687),
+			new google.maps.LatLng(37.783368, -122.439666),
+			new google.maps.LatLng(37.783383, -122.439594),
+			new google.maps.LatLng(37.783508, -122.439525),
+			new google.maps.LatLng(37.783842, -122.439591),
+			new google.maps.LatLng(37.784147, -122.439668),
+			new google.maps.LatLng(37.784206, -122.439686),
+			new google.maps.LatLng(37.784386, -122.439790),
+			new google.maps.LatLng(37.784701, -122.439902),
+			new google.maps.LatLng(37.784965, -122.439938),
+			new google.maps.LatLng(37.785010, -122.439947),
+			new google.maps.LatLng(37.785360, -122.439952),
+			new google.maps.LatLng(37.785715, -122.440030),
+			new google.maps.LatLng(37.786117, -122.440119),
+			new google.maps.LatLng(37.786564, -122.440209),
+			new google.maps.LatLng(37.786905, -122.440270),
+			new google.maps.LatLng(37.786956, -122.440279),
+			new google.maps.LatLng(37.800224, -122.433520),
+			new google.maps.LatLng(37.800155, -122.434101),
+			new google.maps.LatLng(37.800160, -122.434430),
+			new google.maps.LatLng(37.800378, -122.434527),
+			new google.maps.LatLng(37.751266, -122.403355) ];
+	var pointArray
+	
+	function giveThisGuyAName() {
+		var active = $("#tabs").tabs( "option", "active" );
+		alert("ACTIVE TAB: "+active);
+		if(active==0) {
+			alert("Calling Reload Map");
+			reloadMap();
+		} else if(active==1) {
+			//reloadTab();
+		} else if(active==2) {
+			alert("Friends!!");
+		}
+	}
+	
+	function initialize() {
+		var mapOptions = {
+			zoom : 13,
+			center : new google.maps.LatLng(37.774546, -122.433523),
+			mapTypeId : google.maps.MapTypeId.ROADMAP
+		};
+
+		map = new google.maps.Map(document.getElementById('tabs-heat'),
+				mapOptions);
+
+		//map.setCenter(new google.maps.LatLng($(this).data('latitude'), $(this).data('longitude')));
+		//map.setCenter(new google.maps.LatLng(51.5072,  0.1275));
+		pointArray = new google.maps.MVCArray(taxiData);
+
+		heatmap = new google.maps.visualization.HeatmapLayer({
+			data : pointArray
+		});
+
+		heatmap.setMap(map);
+	}
+
+	function reloadMap() {
+		var xmlhttp;
+		var cityVal = document.getElementById("citySelect").value;
+		var categoryVal = document.getElementById("categorySelect").value;
+		xmlhttp = new XMLHttpRequest();
+		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var responseObj = JSON.parse(xmlhttp.responseText);
+				var pointsArray = responseObj.points;
+				var newMapPointsArray = new Array(pointsArray.length);
+				for (i = 0; i < pointsArray.length; i++) {
+					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
+							pointsArray[i].longitude), weight: pointsArray[i].check_in_info};
+					newMapPointsArray[i] = dataPoint;
+				}
+
+				pointArray = new google.maps.MVCArray(newMapPointsArray);
+				heatmap.setData(pointArray);
+				map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
+						pointsArray[0].longitude));
+
+			}
+		}
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+  
   <script>
 	//Details tab 
 var categoryItems, heatmap;
@@ -88,12 +205,27 @@ xmlhttp.open("GET",url,true);
 xmlhttp.send();
 }
 
+
+//HEATMAP
+
 </script>
 
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
 	</head>
 	<body>
+	
+	<%
+		OracleDBWrapper dbWrapper = new OracleDBWrapper(
+				DatabaseUtil.getURL("158.130.106.114"),
+				DatabaseUtil.UERNAME, DatabaseUtil.PASSWORD);
+		String queryCity = "select distinct city from business order by city";
+		String queryCategory = "select distinct category from categories order by category";
+		java.sql.ResultSet rsCity = dbWrapper.executeQuery(queryCity);
+		java.sql.ResultSet rsCategory = dbWrapper
+				.executeQuery(queryCategory);
+		try {
+	%>
 	
 		<!-- Header -->
 			<div id="header" class="skel-layers-fixed">
@@ -123,9 +255,36 @@ xmlhttp.send();
 							
 							-->
 							<ul>
-								<li><div align="center"><select></select></div></li>
-								<li><div align="center"><select></select></div></li>
-								 <li><button type="button" onclick="reloadTab()">Get Content</button><li/>
+								<li><div align="center"><select id="citySelect">
+														<%
+							while (rsCity.next()) {
+						%>
+						<option value="<%=rsCity.getString("city")%>"><%=rsCity.getString("city")%></option>
+						<%
+							}
+						%></select></div></li>
+								<li><div align="center"><select id="categorySelect">
+								<%
+							while (rsCategory.next()) {
+						%>
+						<option value="<%=rsCategory.getString("category")%>"><%=rsCategory.getString("category")%></option>
+						<%
+							}
+						%>
+								</select></div>
+								<%
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						if (rsCity != null)
+							rsCity.close();
+						if (rsCategory != null)
+							rsCategory.close();
+						dbWrapper.closeConnection();
+					}
+				%>
+				</li>
+								 <li><button type="button" onclick="giveThisGuyAName()">Get Content</button><li/>
 								
 
 							</ul>
@@ -177,7 +336,8 @@ xmlhttp.send();
     <li><a href="#tabs-friends">Friends</a></li>
   </ul>
   <div id="tabs-heat">
-    <p>Heat Map</p>
+    
+    <!-- <p>Heat Map</p> -->
   </div>
   <div id="tab-details">
     <!-- <p>Details</p> -->
