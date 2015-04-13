@@ -19,16 +19,23 @@ public class HeatMapServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("SERVLET GOT CALL"+request.getPathInfo());
-		String keys[] = {"latitude","longitude","points"};
+		
+		String keys[] = {"latitude","longitude","check_in_info","points1"};
 		if(request.getPathInfo()!=null && request.getPathInfo().contains("points1")) {
 			//Connect to database
 			String city = request.getParameter("city");
 			String category = request.getParameter("category");
 			System.out.println("Got request for: "+city+" and category: "+category);
-			//String queryString = "select latitude, longitude from business where city='Pittsburgh'";
-			String queryString ="select  distinct business.latitude, business.longitude "
-					+"from business inner join categories on categories.bid = business.bid " 
-					+"where business.city='"+city+"' and categories.category='"+category+"'";
+			System.out.println(city + ":");
+			String queryString = "select business.latitude,business.longitude,c.check_in_info "
+					+ "from business "
+					+ "inner join categories "
+					+ "on categories.bid = business.bid "
+					+ "inner join checkin c "
+					+ "on c.bid = business.bid "
+					+ "where business.city='" + city 
+					+ "' and categories.category='"+category +"'";
+			System.out.println("QString: "+queryString);
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			if(set==null) {
 				System.out.println("AHHHH>");
@@ -40,9 +47,12 @@ public class HeatMapServlet extends HttpServlet {
 			int count = 0;
 			try {
 				while(set.next()) {
+					count++;
 					JSONObject obj = new JSONObject();
 					obj.put(keys[0], set.getDouble(keys[0]));
 					obj.put(keys[1], set.getDouble(keys[1]));
+					obj.put(keys[2],  set.getInt(keys[2]));
+							
 					array.add(obj);
 				}
 				JSONObject resultObject = new JSONObject();
@@ -51,6 +61,7 @@ public class HeatMapServlet extends HttpServlet {
 				resultObject.put("category", category);
 				resultObject.put("points", array);
 				response.setContentType("application/json");
+				//System.out.println("JSON Object" + resultObject);
 				response.getWriter().println(resultObject.toString());
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
