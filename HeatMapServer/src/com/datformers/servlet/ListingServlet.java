@@ -27,6 +27,7 @@ public class ListingServlet extends HttpServlet{
 		String bid = "";
 		String summary = "";
 		String businessName="";
+		String address="";
 		String stars = "";
 		int startIndex=1;
 		int endIndex = 0;
@@ -44,15 +45,14 @@ public class ListingServlet extends HttpServlet{
 		try {
 			while(set.next()) {
 				bid=set.getString("bid");
-				ReviewSummary sum = new ReviewSummary(bid, 3);
-				summary = sum.getSummary();
 				businessName = set.getString("name");
 				stars = set.getString("stars");
+				address=set.getString("full_address");
 				
 				JSONObject jo = new JSONObject();
 				jo.put("bid", bid);
 				jo.put("name", businessName);
-				jo.put("summary", summary);
+				jo.put("address", address);
 				jo.put("stars", stars);
 				ja.add(jo);
 			}
