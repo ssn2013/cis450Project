@@ -1,0 +1,354 @@
+<!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+
+<html>
+	<head>
+		<title>Datformers</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		--<script src="js/jquery.min.js"></script>
+		<script src="js/jquery.scrolly.min.js"></script>
+		<!--<script src="js/jquery.scrollzer.min.js"></script>-->
+		<script src="js/skel.min.js"></script>
+		<script src="js/skel-layers.min.js"></script>
+		<script src="js/init.js"></script>
+		<noscript>
+			<link rel="stylesheet" href="css/skel.css" />
+			<link rel="stylesheet" href="css/style.css" />
+			<link rel="stylesheet" href="css/style-wide.css" />
+		</noscript>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  
+  
+  <script>
+  $(function() {
+    $( "#tabs" ).tabs();
+  });
+  </script>
+  
+<style>
+	#tabs-heat {
+	height: 500px;
+	margin: 0px;
+	padding: 0px
+}
+</style>
+  <script
+	src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+  <script>
+  	var map, pointarray, heatmap;
+	var taxiData = [ new google.maps.LatLng(37.782551, -122.445368),
+			new google.maps.LatLng(37.782745, -122.444586),
+			new google.maps.LatLng(37.782842, -122.443688),
+			new google.maps.LatLng(37.782919, -122.442815),
+			new google.maps.LatLng(37.782992, -122.442112),
+			new google.maps.LatLng(37.783100, -122.441461),
+			new google.maps.LatLng(37.783206, -122.440829),
+			new google.maps.LatLng(37.783273, -122.440324),
+			new google.maps.LatLng(37.783316, -122.440023),
+			new google.maps.LatLng(37.783357, -122.439794),
+			new google.maps.LatLng(37.783371, -122.439687),
+			new google.maps.LatLng(37.783368, -122.439666),
+			new google.maps.LatLng(37.783383, -122.439594),
+			new google.maps.LatLng(37.783508, -122.439525),
+			new google.maps.LatLng(37.783842, -122.439591),
+			new google.maps.LatLng(37.784147, -122.439668),
+			new google.maps.LatLng(37.784206, -122.439686),
+			new google.maps.LatLng(37.784386, -122.439790),
+			new google.maps.LatLng(37.784701, -122.439902),
+			new google.maps.LatLng(37.784965, -122.439938),
+			new google.maps.LatLng(37.785010, -122.439947),
+			new google.maps.LatLng(37.785360, -122.439952),
+			new google.maps.LatLng(37.785715, -122.440030),
+			new google.maps.LatLng(37.786117, -122.440119),
+			new google.maps.LatLng(37.786564, -122.440209),
+			new google.maps.LatLng(37.786905, -122.440270),
+			new google.maps.LatLng(37.786956, -122.440279),
+			new google.maps.LatLng(37.800224, -122.433520),
+			new google.maps.LatLng(37.800155, -122.434101),
+			new google.maps.LatLng(37.800160, -122.434430),
+			new google.maps.LatLng(37.800378, -122.434527),
+			new google.maps.LatLng(37.751266, -122.403355) ];
+	var pointArray
+	
+	function giveThisGuyAName() {
+		var active = $("#tabs").tabs( "option", "active" );
+		//alert("ACTIVE TAB: "+active);
+		if(active==0) {
+			//alert("Calling Reload Map");
+			reloadMap();
+		} else if(active==1) {
+			reloadTab();
+		} else if(active==2) {
+			alert("Friends!!");
+		}
+	}
+	
+	function initialize() {
+		var mapOptions = {
+			zoom : 13,
+			center : new google.maps.LatLng(37.774546, -122.433523),
+			mapTypeId : google.maps.MapTypeId.ROADMAP
+		};
+
+		map = new google.maps.Map(document.getElementById('tabs-heat'),
+				mapOptions);
+
+		//map.setCenter(new google.maps.LatLng($(this).data('latitude'), $(this).data('longitude')));
+		//map.setCenter(new google.maps.LatLng(51.5072,  0.1275));
+		pointArray = new google.maps.MVCArray(taxiData);
+
+		heatmap = new google.maps.visualization.HeatmapLayer({
+			data : pointArray
+		});
+
+		heatmap.setMap(map);
+	}
+
+	function reloadMap() {
+		var xmlhttp;
+		var cityVal = document.getElementById("citySelect").value;
+		var categoryVal = document.getElementById("categorySelect").value;
+		xmlhttp = new XMLHttpRequest();
+		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var responseObj = JSON.parse(xmlhttp.responseText);
+				var pointsArray = responseObj.points;
+				var newMapPointsArray = new Array(pointsArray.length);
+				for (i = 0; i < pointsArray.length; i++) {
+					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
+							pointsArray[i].longitude), weight: pointsArray[i].check_in_info};
+					newMapPointsArray[i] = dataPoint;
+				}
+
+				pointArray = new google.maps.MVCArray(newMapPointsArray);
+				heatmap.setData(pointArray);
+				map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
+						pointsArray[0].longitude));
+			}
+		}
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+  <script>
+	//Details tab 
+	var categoryItems, heatmap;
+
+	function reloadTab() {
+		var xmlhttp;
+		var cityVal = document.getElementById("citySelect").value;
+		var categoryVal = document.getElementById("categorySelect").value;
+
+		xmlhttp=new XMLHttpRequest();
+		url="list?city="+cityVal+"&category="+categoryVal+"&index=1";
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var responseObj = JSON.parse(xmlhttp.responseText); 
+				var categoryItems = responseObj.items;
+				//code to display data
+				var detailsTab = document.getElementById("tab-details");
+				detailsTab.innerHTML = "";
+				for(var i = 0; i < categoryItems.length; i++) {
+					var record = document.createElement("p");
+    				var name = document.createElement("a");
+    				name.style.color='blue';
+    				var bid=categoryItems[i].bid;
+    				var url="details?bid="+bid;
+    				name.setAttribute("href",url);
+    				name.style.fontSize="x-large";
+    				name.textDecoration="underline";
+    				var u=document.createElement("u");
+    				u.fontWeight="900";
+    				u.innerHTML=(i+1)+"."+categoryItems[i].name+"&nbsp;";
+    				name.appendChild(u);
+    				var countstars=categoryItems[i].stars;
+    				var count=parseInt(countstars);
+    				for (var j = 1; j < count; j++) {
+	 					var img = document.createElement("img");
+	 					img.style.height='25px';
+	 					img.style.width='25px';
+	 					img.src = "images/star.png";
+	 					name.appendChild(img);
+					}	
+    				detailsTab.appendChild(name);
+
+    				var add=document.createElement("u");
+    				add.style.fontWeight='bold';
+    				add.innerHTML="Address: ";
+    				add.style.fontSize="medium";
+    				record.appendChild(add);
+    				body=categoryItems[i].address;
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
+    
+    				record.appendChild(document.createElement("br"));
+    				var o=document.createElement("u");
+    				o.style.fontWeight='bold';
+    				o.innerHTML="Open: ";
+    				o.style.fontSize="medium";
+    				record.appendChild(o);
+    				if(categoryItems[i].open== "true") {
+    					body="Yes";
+    				}
+    				else {
+    					body="No";
+				    }		
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
+    				record.appendChild(document.createElement("br"));
+    				var r=document.createElement("u");
+    				r.style.fontWeight='bold';
+    				r.style.fontSize="medium";
+    				r.innerHTML="Review: ";
+    				record.appendChild(r);
+    				body=categoryItems[i].review;
+    				b=document.createTextNode(body);
+    				record.style.fontSize="small";
+    				record.style.lineHeight="1.4";
+    				record.appendChild(b);
+    
+    				 detailsTab.appendChild(record);
+ 
+    			}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+
+	function searchBing() {
+		var queryString = document.getElementById("searchbox").value;
+		xmlhttp=new XMLHttpRequest();
+
+		url="search?query="+queryString;
+     	setTimeout("alert('Thank you for using Bing Search.Your Results will be retreived shortly. Please wait.....');", 0);
+ 		xmlhttp.onreadystatechange=function() {
+ 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var htmlDoc="<html><head><h1>Bing Search Results!!</h1><head><body>"
+				var responseObj = JSON.parse(xmlhttp.responseText); 
+				var searchItems = responseObj.result;
+				//code to display data
+	
+				for(var i = 0; i < searchItems.length; i++) {
+					htmlDoc+="<p font-size: \"small\" line-height: '10%' >";
+					htmlDoc+="<a href=\""+searchItems[i].url+"\" font-size:\"x-large\" text-decoration: \"underline\">";	
+    				htmlDoc+="<u><font color=\"blue\">"+searchItems[i].title+"</font></u></a><br/>";
+    				htmlDoc+="<font color=\"green\">"+searchItems[i].displayURL+"</font><br/>";
+    				htmlDoc+=searchItems[i].description+"<br/>";
+    
+ 				}
+			var newWindow = window.open();
+			newWindow.document.write(htmlDoc);
+			newWindow.document.close();	
+ 			}
+ 		}
+
+ 		xmlhttp.open("GET",url,true);
+ 		xmlhttp.send();
+	}
+	</script>
+  
+
+		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+	</head>
+	<body>
+	
+	
+	
+		<!-- Header -->
+			<div id="header" class="skel-layers-fixed">
+
+				<div class="top">
+
+					<!-- Logo -->
+						<div id="logo">
+							<span class="image avatar48"><img src="images/Hyperspace.jpg" alt="" /></span>
+							<h1 id="title">DATFORMERS</h1><br\>
+							<p>Adarsh,Aryaa,Deepak,Sruthi</p>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<!--
+							
+								Prologue's nav expects links in one of two formats:
+								
+								1. Hash link (scrolls to a different section within the page)
+								
+								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
+
+								2. Standard link (sends the user to another page/site)
+
+								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
+							
+							-->
+						
+						</nav>
+						
+				</div>
+				
+				<div class="bottom">
+
+					<!-- Social Icons -->
+						<ul class="icons">
+							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+				
+				</div>
+			
+			</div>
+
+		<!-- Main -->
+		<section id="top" class="one dark cover">
+
+			
+			<div class="top-searchbar" align="center">
+					<!-- <form> -->
+						<input id="searchbox" type="text" onfocus="this.value = this.value=='Bing search'?'':this.value;" onblur="this.value = this.value==''?'Bing search':this.value;"/>
+						<!-- <button type="button" src="images/pic02.jpg" onclick="alert('search works');"></button> -->
+						<input type="submit" src="images/pic02.jpg" onclick="searchBing()"/>
+						
+					<!-- </form> -->
+
+			</div>
+				
+									
+				
+			
+		</section>
+			<div id="main">
+
+				
+				<!-- Intro -->
+					
+					
+  
+  
+  
+</div>
+					
+			</div>
+
+				
+
+		
+
+	</body>
+</html>
