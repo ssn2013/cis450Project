@@ -15,7 +15,7 @@ import com.datformers.database.OracleDBWrapper;
 import com.datformers.utils.DatabaseUtil;
 
 public class HeatMapServlet extends HttpServlet {
-	private OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL("158.130.106.114"), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
+	private OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("SERVLET GOT CALL"+request.getPathInfo());
