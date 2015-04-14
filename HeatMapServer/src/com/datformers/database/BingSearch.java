@@ -27,7 +27,6 @@ public class BingSearch {
 					"Query", query);
 			Enumerable<OEntity> entities = oRequest.execute();
 
-			System.out.println(entities.count());
 			ArrayList<WebSearchResult> web = new ArrayList<WebSearchResult>();
 			for (OEntity e:entities) {
 				WebSearchResult tmp = new WebSearchResult();

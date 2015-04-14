@@ -17,6 +17,40 @@
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-layers.min.js"></script>
 		<script src="js/init.js"></script>
+		<script>
+		function searchBing() {
+			var queryString = document.getElementById("searchbox").value;
+			xmlhttp=new XMLHttpRequest();
+			url="search?query="+queryString;
+     		setTimeout("alert('Thank you for using Bing Search.Your Results will be retreived shortly. Please wait.....');", 0);
+ 
+ 			xmlhttp.onreadystatechange=function() {
+ 				if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+					var htmlDoc="<html><head><h1>Bing Search Results!!</h1><head><body>"
+					var responseObj = JSON.parse(xmlhttp.responseText); 
+
+					var searchItems = responseObj.result;
+					//code to display data
+	
+					for(var i = 0; i < searchItems.length; i++) {
+						htmlDoc+="<p font-size: \"small\" line-height: '10%' >";
+						htmlDoc+="<a href=\""+searchItems[i].url+"\" font-size:\"x-large\" text-decoration: \"underline\">";	
+    					htmlDoc+="<u><font color=\"blue\">"+searchItems[i].title+"</font></u></a><br/>";
+    
+    					htmlDoc+="<font color=\"green\">"+searchItems[i].displayURL+"</font><br/>";
+    					htmlDoc+=searchItems[i].description+"<br/>";
+    
+ 					}
+					var newWindow = window.open();
+					newWindow.document.write(htmlDoc);
+					newWindow.document.close();	
+ 					}
+ 				}
+
+ 				xmlhttp.open("GET",url,true);
+ 				xmlhttp.send();
+		}
+		</script>
 		<noscript>
 			<link rel="stylesheet" href="css/skel.css" />
 			<link rel="stylesheet" href="css/style.css" />
@@ -87,7 +121,7 @@
 			<div class="top-searchbar" align="center">
 					<form>
 						<input type="text" onfocus="this.value = this.value=='Bing search'?'':this.value;" onblur="this.value = this.value==''?'Bing search':this.value;"/>
-						<input type="submit" src="images/pic02.jpg"value="Search" />
+						<input type="submit" src="images/pic02.jpg" onclick="searchBing()"/>
 						
 					</form>
 

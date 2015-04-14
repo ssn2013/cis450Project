@@ -149,100 +149,121 @@
   </script>
   <script>
 	//Details tab 
-var categoryItems, heatmap;
+	var categoryItems, heatmap;
 
-function reloadTab() {
-var xmlhttp;
-var cityVal = document.getElementById("citySelect").value;
-var categoryVal = document.getElementById("categorySelect").value;
-// var cityVal="Las Vegas";
-// var categoryVal= "Restaurants";
-xmlhttp=new XMLHttpRequest();
+	function reloadTab() {
+		var xmlhttp;
+		var cityVal = document.getElementById("citySelect").value;
+		var categoryVal = document.getElementById("categorySelect").value;
 
-url="heatmap/list?city="+cityVal+"&category="+categoryVal+"&index=1";
+		xmlhttp=new XMLHttpRequest();
+		url="list?city="+cityVal+"&category="+categoryVal+"&index=1";
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var responseObj = JSON.parse(xmlhttp.responseText); 
+				var categoryItems = responseObj.items;
+				//code to display data
+				var detailsTab = document.getElementById("tab-details");
+				detailsTab.innerHTML = "";
+				for(var i = 0; i < categoryItems.length; i++) {
+					var record = document.createElement("p");
+    				var name = document.createElement("a");
+    				name.style.color='blue';
+    				var bid=categoryItems[i].bid;
+    				var url="details?bid="+bid;
+    				name.setAttribute("href",url);
+    				name.style.fontSize="x-large";
+    				name.textDecoration="underline";
+    				var u=document.createElement("u");
+    				u.fontWeight="900";
+    				u.innerHTML=(i+1)+"."+categoryItems[i].name+"&nbsp;";
+    				name.appendChild(u);
+    				var countstars=categoryItems[i].stars;
+    				var count=parseInt(countstars);
+    				for (var j = 1; j < count; j++) {
+	 					var img = document.createElement("img");
+	 					img.style.height='25px';
+	 					img.style.width='25px';
+	 					img.src = "images/star.png";
+	 					name.appendChild(img);
+					}	
+    				detailsTab.appendChild(name);
 
-xmlhttp.onreadystatechange=function()
-{
-if (xmlhttp.readyState==4 && xmlhttp.status==200)
-{
-
-	var responseObj = JSON.parse(xmlhttp.responseText); 
-	
-	var categoryItems = responseObj.items;
-	// //code to display data
-	var detailsTab = document.getElementById("tab-details");
-	detailsTab.innerHTML = "";
-	for(var i = 0; i < categoryItems.length; i++) {
-	var record = document.createElement("p");
-    var name = document.createElement("a");
-    name.style.color='blue';
-    var bid=categoryItems[i].bid;
-    var url="details?bid="+bid;
-    name.setAttribute("href",url);
-    name.style.fontSize="x-large";
-    name.textDecoration="underline";
-    var u=document.createElement("u");
-    u.fontWeight="900";
-    u.innerHTML=(i+1)+"."+categoryItems[i].name+"&nbsp;";
-    name.appendChild(u);
-    var countstars=categoryItems[i].stars;
-    var count=parseInt(countstars);
-    for (var j = 1; j < count; j++) {
-	 var img = document.createElement("img");
-	 img.style.height='25px';
-	 img.style.width='25px';
-	 img.src = "images/star.png";
-	 name.appendChild(img);
-	}	
-    detailsTab.appendChild(name);
-
-    var add=document.createElement("u");
-    add.style.fontWeight='bold';
-    add.innerHTML="Address: ";
-    add.style.fontSize="medium";
-    record.appendChild(add);
-    body=categoryItems[i].address;
-    b=document.createTextNode(body);
-    record.appendChild(b);
+    				var add=document.createElement("u");
+    				add.style.fontWeight='bold';
+    				add.innerHTML="Address: ";
+    				add.style.fontSize="medium";
+    				record.appendChild(add);
+    				body=categoryItems[i].address;
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
     
-    record.appendChild(document.createElement("br"));
-    var o=document.createElement("u");
-    o.style.fontWeight='bold';
-    o.innerHTML="Open: ";
-    o.style.fontSize="medium";
-    record.appendChild(o);
-
-    if(categoryItems[i].open== "true") {
-    	body="Yes";
-    }
-    else {
-    	body="No";
-    }
-    // body=categoryItems[i].open;
-    b=document.createTextNode(body);
-    record.appendChild(b);
-    record.appendChild(document.createElement("br"));
-    var r=document.createElement("u");
-    r.style.fontWeight='bold';
-    r.style.fontSize="medium";
-    r.innerHTML="Review: ";
-    record.appendChild(r);
-    body=categoryItems[i].review;
-    b=document.createTextNode(body);
-    record.style.fontSize="small";
-    record.style.lineHeight="1.4";
-    record.appendChild(b);
-    //alert("p is "+record)
-     detailsTab.appendChild(record);
+    				record.appendChild(document.createElement("br"));
+    				var o=document.createElement("u");
+    				o.style.fontWeight='bold';
+    				o.innerHTML="Open: ";
+    				o.style.fontSize="medium";
+    				record.appendChild(o);
+    				if(categoryItems[i].open== "true") {
+    					body="Yes";
+    				}
+    				else {
+    					body="No";
+				    }		
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
+    				record.appendChild(document.createElement("br"));
+    				var r=document.createElement("u");
+    				r.style.fontWeight='bold';
+    				r.style.fontSize="medium";
+    				r.innerHTML="Review: ";
+    				record.appendChild(r);
+    				body=categoryItems[i].review;
+    				b=document.createTextNode(body);
+    				record.style.fontSize="small";
+    				record.style.lineHeight="1.4";
+    				record.appendChild(b);
+    
+    				 detailsTab.appendChild(record);
  
-    }
-}
-}
-xmlhttp.open("GET",url,true);
-xmlhttp.send();
-}
+    			}
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
 
-</script>
+	function searchBing() {
+		var queryString = document.getElementById("searchbox").value;
+		xmlhttp=new XMLHttpRequest();
+
+		url="search?query="+queryString;
+     	setTimeout("alert('Thank you for using Bing Search.Your Results will be retreived shortly. Please wait.....');", 0);
+ 		xmlhttp.onreadystatechange=function() {
+ 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var htmlDoc="<html><head><h1>Bing Search Results!!</h1><head><body>"
+				var responseObj = JSON.parse(xmlhttp.responseText); 
+				var searchItems = responseObj.result;
+				//code to display data
+	
+				for(var i = 0; i < searchItems.length; i++) {
+					htmlDoc+="<p font-size: \"small\" line-height: '10%' >";
+					htmlDoc+="<a href=\""+searchItems[i].url+"\" font-size:\"x-large\" text-decoration: \"underline\">";	
+    				htmlDoc+="<u><font color=\"blue\">"+searchItems[i].title+"</font></u></a><br/>";
+    				htmlDoc+="<font color=\"green\">"+searchItems[i].displayURL+"</font><br/>";
+    				htmlDoc+=searchItems[i].description+"<br/>";
+    
+ 				}
+			var newWindow = window.open();
+			newWindow.document.write(htmlDoc);
+			newWindow.document.close();	
+ 			}
+ 		}
+
+ 		xmlhttp.open("GET",url,true);
+ 		xmlhttp.send();
+	}
+	</script>
   
 
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
@@ -290,7 +311,7 @@ xmlhttp.send();
 							
 							-->
 							<ul>
-								<li><div align="center"><select id="citySelect">
+								<li><div align="center"><select id="citySelect" >
 														<%
 							while (rsCity.next()) {
 						%>
@@ -347,11 +368,12 @@ xmlhttp.send();
 
 			
 			<div class="top-searchbar" align="center">
-					<form>
-						<input type="text" onfocus="this.value = this.value=='Bing search'?'':this.value;" onblur="this.value = this.value==''?'Bing search':this.value;"/>
-						<input type="submit" src="images/pic02.jpg"value="Search" />
+					<!-- <form> -->
+						<input id="searchbox" type="text" onfocus="this.value = this.value=='Bing search'?'':this.value;" onblur="this.value = this.value==''?'Bing search':this.value;"/>
+						<!-- <button type="button" src="images/pic02.jpg" onclick="alert('search works');"></button> -->
+						<input type="submit" src="images/pic02.jpg" onclick="searchBing()"/>
 						
-					</form>
+					<!-- </form> -->
 
 			</div>
 				
