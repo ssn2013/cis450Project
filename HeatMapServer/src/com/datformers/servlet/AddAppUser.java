@@ -17,7 +17,7 @@ public class AddAppUser {
 
 	AddAppUser(String str){
 		query = str;
-		wrapper = new OracleDBWrapper(DatabaseUtil.getURL(""), DatabaseUtil.UERNAME, DatabaseUtil.PASSWORD);
+		wrapper = new OracleDBWrapper(DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME, DatabaseUtil.PASSWORD);
 	}
 	public ResultSet addUser(){
 		
