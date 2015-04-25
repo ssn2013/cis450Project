@@ -1,0 +1,85 @@
+<%@ page import="java.io.*,java.util.*, java.io.IOException, java.sql.ResultSet, java.sql.SQLException, java.util.ArrayList, java.util.Calendar, java.util.HashMap, javax.servlet.http.HttpServlet, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.json.JSONException, org.json.JSONObject, org.json.simple.JSONArray, com.datformers.ReviewSummary.ReviewSummary, com.datformers.database.OracleDBWrapper, com.datformers.utils.DatabaseUtil" %>
+
+<html>
+<head>
+<title>HTTP Header Request Example</title>
+</head>
+<body>
+<center>
+<h2>HTTP Header Request Example</h2>
+<table width="100%" border="1" align="center">
+<tr bgcolor="#949494">
+<th>Header Name</th><th>Header Value(s)</th>
+</tr>
+<%
+	OracleDBWrapper dbWrapper = new OracleDBWrapper(
+			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
+			DatabaseUtil.PASSWORD);
+   HashMap<Integer, String> days = new HashMap<Integer, String>();
+		days.put(1, "Sunday");
+		days.put(2, "Monday");
+		days.put(3, "Tuesday");
+		days.put(4, "Wednesday");
+		days.put(5, "Thursday");
+		days.put(6, "Friday");
+		days.put(7, "Saturday");
+		
+		String bid = request.getParameter("bid");
+		String name="";
+		String stars="'";
+		String address="";
+		String lat="'";
+		String lon="";
+		ArrayList<String> reviews = new ArrayList<String>();
+		
+		String summary="Adarsh is summary";
+		Calendar calendar = Calendar.getInstance();
+		int day = calendar.get(Calendar.DAY_OF_WEEK);
+		String lookingFor=days.get(day);
+		String queryString = "select * "
+				+ "from business inner join businesshours on businesshours.BID = business.bid "
+				+ "where business.bid='"+bid+"' and businesshours.DAY='"+lookingFor+"'";
+		ResultSet set = dbWrapper.executeQuery(queryString);
+		try {
+			while(set.next()){
+				name = set.getString("name");
+				stars = set.getString("stars");
+				address=set.getString("full_address");
+				lat=set.getString("latitude");
+				lon=set.getString("longitude");
+				
+			}
+			JSONArray ja = new JSONArray();
+			JSONObject obj = new JSONObject();
+			obj.put("name",name);
+			obj.put("stars",stars);
+			obj.put("address",address);
+			obj.put("lat",lat);
+			obj.put("lon",lon);
+			ReviewSummary sum = new ReviewSummary(bid, 4);
+			HashMap<String, ArrayList<String>> ret = sum.getReviews();
+			String combinedReviews = "";
+			for ( String key : ret.keySet() ) {
+			    combinedReviews=key;
+			}
+			//summary = sum.getSummary(combinedReviews);
+			
+			reviews = ret.get(combinedReviews);
+			for(int i=0;i<reviews.size();i++){
+				ja.add(reviews.get(i));
+			}
+			
+			obj.put("summary", summary);
+			obj.put("reviews", ja);
+			
+			
+			dbWrapper.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+%>
+</table>
+</center>
+</body>
+</html>
