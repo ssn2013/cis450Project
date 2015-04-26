@@ -50,10 +50,11 @@ public class ListingServlet extends HttpServlet {
 				// + "where business.city='" + city
 				// + "' and categories.category='" + category + "') where r >= "
 				// + startIndex + " and r < " + endIndex + " order by stars desc";
-		String queryString="With a as ( select * from business inner join categories on categories.bid = business.bid"
-							+ " where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM < "+endIndex +" order by stars desc)"
-							+ "select * from ( select /*+ FIRST_ROWS(n) */a.*, ROWNUM rnum from a)"
-							+"where rnum  >= "+ startIndex;
+		
+		//String queryString="With a as ( select * from business inner join categories on categories.bid = business.bid"
+		//					+ " where business.city='"+city+"' and categories.category='"+category+"' and ROWNUM < "+endIndex +" order by stars desc)"
+		//					+ "select * from ( select /*+ FIRST_ROWS(n) */a.*, ROWNUM rnum from a)"
+		//					+"where rnum  >= "+ startIndex;
 
 		
 				
@@ -62,7 +63,12 @@ public class ListingServlet extends HttpServlet {
 				// + "where business.city='" + city
 				// + "' and categories.category='" + category + "' 
  
-     
+		String queryString = "select * "+
+							"from ( select a.*, rownum rnum "+
+							"from ( select * from business inner join categories on categories.bid = business.bid"
+							+ " where business.city='"+city+"' and categories.category='"+category+"' ) a "+
+							"where rownum < "+endIndex + " ) where rnum >= "+startIndex;
+		
 		
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
