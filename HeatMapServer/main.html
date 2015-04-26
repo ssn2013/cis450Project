@@ -85,14 +85,14 @@
 			new google.maps.LatLng(37.751266, -122.403355) ];
 	var pointArray
 	
-	function giveThisGuyAName() {
+	function giveThisGuyAName(index) {
 		var active = $("#tabs").tabs( "option", "active" );
 		//alert("ACTIVE TAB: "+active);
 		//if(active==0) {
 			//alert("Calling Reload Map");
 			reloadMap();
 		//} else if(active==1) {
-			reloadTab();
+			reloadTab(index);
 		//} else if(active==2) {
 		//	alert("Friends!!");
 		//}
@@ -232,13 +232,13 @@
 	//Details tab 
 	var categoryItems, heatmap;
 
-	function reloadTab() {
+	function reloadTab(index) {
 		var xmlhttp;
 		var cityVal = document.getElementById("citySelect").value;
 		var categoryVal = document.getElementById("categorySelect").value;
 
 		xmlhttp=new XMLHttpRequest();
-		url="list?city="+cityVal+"&category="+categoryVal+"&index=1";
+		url="list?city="+cityVal+"&category="+categoryVal+"&index="+index;
 		xmlhttp.onreadystatechange=function() {
 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 				var responseObj = JSON.parse(xmlhttp.responseText); 
@@ -251,10 +251,10 @@
     				var name = document.createElement("a");
     				name.style.color='blue';
     				var bid=categoryItems[i].bid;
-    				var url="details.html?bid="+bid;
+    				var url1="details.html?bid="+bid;
     				// name.setAttribute("href","http://yahoo.com");
     				//name.setAttribute("target","_blank");
-    				name.href=url;
+    				name.href=url1;
     				name.target="_blank";
     				//name.onClick="window.open('http://www.yahoo.com','_blank')";
     				name.style.fontSize="x-large";
@@ -312,6 +312,16 @@
     				 detailsTab.appendChild(record);
  
     			}
+    			var div = document.createElement("div");
+    			div.align="center";
+    			var but = document.createElement("button");
+    			but.type="button";
+    			var c=+index+5;
+    			var tmp="giveThisGuyAName("+c+")";
+    			but.setAttribute("onClick",tmp);
+    			but.innerHTML="More";
+    			div.appendChild(but);
+    			detailsTab.appendChild(div);
 			}
 		}
 		xmlhttp.open("GET",url,true);
@@ -433,8 +443,9 @@
 					}
 				%>
 				</li>
-								 <li><div align="center"><button type="button" onclick="giveThisGuyAName()">Get Content</button></div><li/>
+								 <li><div align="center"><button type="button" onclick="giveThisGuyAName(1)">Get Content</button></div><li/>
 								
+								 <li><div align="center"><input name="logout" style="top: 30px;" type="button" onclick="location.href='index.html'" value="Logout" /></div></li>
 
 							</ul>
 						</nav>
