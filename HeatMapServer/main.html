@@ -107,16 +107,21 @@
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				var responseObj = JSON.parse(xmlhttp.responseText);
 				var pointsArray = responseObj.points;
+				var latSum = 0;
+				var lonSum = 0;
 				var newMapPointsArray = new Array(pointsArray.length);
 				for (i = 0; i < pointsArray.length; i++) {
 					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
 							pointsArray[i].longitude), weight: pointsArray[i].check_in_info};
 					newMapPointsArray[i] = dataPoint;
+					latSum = latSum + pointsArray[i].latitude
+					lonSum = lonSum + pointsArray[i].longitude
 				}
 				var mapOptions = {
-						zoom : 13,
-						center : new google.maps.LatLng(pointsArray[0].latitude,pointsArray[0].longitude),
-						mapTypeId : google.maps.MapTypeId.ROADMAP
+						zoom : 12,
+						center : new google.maps.LatLng(latSum/pointsArray.length,
+								lonSum/pointsArray.length),
+						mapTypeId : google.maps.MapTypeId.ROADMAP,
 					};
 				map = new google.maps.Map(document.getElementById('tabs-heat'),
 						mapOptions);
@@ -125,7 +130,9 @@
 				heatmap = new google.maps.visualization.HeatmapLayer({
 					data : pointArray
 				});
-
+				
+				heatmap.set('opacity',0.9);
+				heatmap.set('radius', 18);
 				heatmap.setMap(map);
 				//heatmap.setData(pointArray);
 				//map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
@@ -155,6 +162,38 @@
 
 		heatmap.setMap(map);*/
 	}
+	function toggleHeatmap() {
+		  heatmap.setMap(heatmap.getMap() ? null : map);
+		}
+
+		function changeGradient() {
+		  var gradient = [
+		    'rgba(0, 255, 255, 0)',
+		    'rgba(0, 255, 255, 1)',
+		    'rgba(0, 191, 255, 1)',
+		    'rgba(0, 127, 255, 1)',
+		    'rgba(0, 63, 255, 1)',
+		    'rgba(0, 0, 255, 1)',
+		    'rgba(0, 0, 223, 1)',
+		    'rgba(0, 0, 191, 1)',
+		    'rgba(0, 0, 159, 1)',
+		    'rgba(0, 0, 127, 1)',
+		    'rgba(63, 0, 91, 1)',
+		    'rgba(127, 0, 63, 1)',
+		    'rgba(191, 0, 31, 1)',
+		    'rgba(255, 0, 0, 1)'
+		  ]
+		  heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+		}
+
+		function changeRadius() {
+		  heatmap.set('radius', heatmap.get('radius') ? null : 15);
+		}
+
+		function changeOpacity() {
+		  heatmap.set('opacity', heatmap.get('opacity') ? null : 0.8);
+		}
+
 
 	function reloadMap() {
 		var xmlhttp;
@@ -167,17 +206,21 @@
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				var responseObj = JSON.parse(xmlhttp.responseText);
 				var pointsArray = responseObj.points;
+				var latSum = 0
+				var lonSum = 0
 				var newMapPointsArray = new Array(pointsArray.length);
 				for (i = 0; i < pointsArray.length; i++) {
 					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
 							pointsArray[i].longitude), weight: pointsArray[i].check_in_info};
 					newMapPointsArray[i] = dataPoint;
+					latSum = latSum + pointsArray[i].latitude
+					lonSum = lonSum + pointsArray[i].longitude
 				}
 
 				pointArray = new google.maps.MVCArray(newMapPointsArray);
 				heatmap.setData(pointArray);
-				map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
-						pointsArray[0].longitude));
+				map.setCenter(new google.maps.LatLng(latSum/pointsArray.length,
+						lonSum/pointsArray.length));
 			}
 		}
 		xmlhttp.open("GET", url, true);
