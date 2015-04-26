@@ -86,5 +86,15 @@
      <servlet-name>MainPage</servlet-name>
      <url-pattern>/main.html</url-pattern>
    </servlet-mapping>
+   
+   <servlet>
+     <servlet-name>FacebookLoginServlet</servlet-name>
+     <servlet-class>com.datformers.servlet.FacebookLoginServlet</servlet-class> 
+   </servlet>
+    
+   <servlet-mapping>
+     <servlet-name>FacebookLoginServlet</servlet-name>
+     <url-pattern>/fblogin</url-pattern>
+   </servlet-mapping>
 
 </web-app>
