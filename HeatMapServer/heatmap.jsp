@@ -120,7 +120,7 @@ html,body,#map-canvas {
 	<!--This is a comment. Comments are not displayed in the browser-->
 	<%
 		OracleDBWrapper dbWrapper = new OracleDBWrapper(
-				DatabaseUtil.getURL("158.130.106.114"),
+				DatabaseUtil.getURL(DatabaseUtil.IP),
 				DatabaseUtil.UERNAME, DatabaseUtil.PASSWORD);
 		String queryCity = "select distinct city from business order by city";
 		String queryCategory = "select distinct category from categories order by category";
