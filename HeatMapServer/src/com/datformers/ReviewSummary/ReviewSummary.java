@@ -46,12 +46,13 @@ public class ReviewSummary {
 			Query.put("business_id", this.businessID);
 
 			BasicDBObject fields = new BasicDBObject();
+			fields.put("review_id", 1);
 			fields.put("text", 1);
 
 			res = mdb.executeQuery(Query, fields);
 			for (int i = 0; i < res.size(); i++) {
 				DBObject current = res.get(i);
-				reviews.add("" + current.get("text"));
+				reviews.add(current.get("review_id")+"$" + current.get("text"));
 				combinedReviews += current.get("text");
 			}
 			mdb.closeConnection();
