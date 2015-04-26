@@ -1,12 +1,15 @@
+
 <!DOCTYPE HTML>
 <!--
 	Prologue by HTML5 UP
 	html5up.net | @n33co
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-
+<%@ page import="java.io.*,java.util.*, java.io.IOException, java.sql.ResultSet, java.sql.SQLException, java.util.ArrayList, java.util.Calendar, java.util.HashMap, javax.servlet.http.HttpServlet, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.json.JSONException, org.json.JSONObject, org.json.simple.JSONArray, com.datformers.ReviewSummary.ReviewSummary, com.datformers.database.OracleDBWrapper, com.datformers.utils.DatabaseUtil,java.io.BufferedReader,java.io.FileInputStream,java.io.IOException,java.io.InputStreamReader" %>
 
 <html>
+	<%float lati=0.0f;
+	  float longi=0.0f;%>
 	<head>
 		<title>Datformers</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -44,189 +47,10 @@
 </style>
   <script
 	src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
-  <script>
-  	var map, pointarray, heatmap;
-	var taxiData = [ new google.maps.LatLng(37.782551, -122.445368),
-			new google.maps.LatLng(37.782745, -122.444586),
-			new google.maps.LatLng(37.782842, -122.443688),
-			new google.maps.LatLng(37.782919, -122.442815),
-			new google.maps.LatLng(37.782992, -122.442112),
-			new google.maps.LatLng(37.783100, -122.441461),
-			new google.maps.LatLng(37.783206, -122.440829),
-			new google.maps.LatLng(37.783273, -122.440324),
-			new google.maps.LatLng(37.783316, -122.440023),
-			new google.maps.LatLng(37.783357, -122.439794),
-			new google.maps.LatLng(37.783371, -122.439687),
-			new google.maps.LatLng(37.783368, -122.439666),
-			new google.maps.LatLng(37.783383, -122.439594),
-			new google.maps.LatLng(37.783508, -122.439525),
-			new google.maps.LatLng(37.783842, -122.439591),
-			new google.maps.LatLng(37.784147, -122.439668),
-			new google.maps.LatLng(37.784206, -122.439686),
-			new google.maps.LatLng(37.784386, -122.439790),
-			new google.maps.LatLng(37.784701, -122.439902),
-			new google.maps.LatLng(37.784965, -122.439938),
-			new google.maps.LatLng(37.785010, -122.439947),
-			new google.maps.LatLng(37.785360, -122.439952),
-			new google.maps.LatLng(37.785715, -122.440030),
-			new google.maps.LatLng(37.786117, -122.440119),
-			new google.maps.LatLng(37.786564, -122.440209),
-			new google.maps.LatLng(37.786905, -122.440270),
-			new google.maps.LatLng(37.786956, -122.440279),
-			new google.maps.LatLng(37.800224, -122.433520),
-			new google.maps.LatLng(37.800155, -122.434101),
-			new google.maps.LatLng(37.800160, -122.434430),
-			new google.maps.LatLng(37.800378, -122.434527),
-			new google.maps.LatLng(37.751266, -122.403355) ];
-	var pointArray
-	
-	function giveThisGuyAName() {
-		var active = $("#tabs").tabs( "option", "active" );
-		//alert("ACTIVE TAB: "+active);
-		if(active==0) {
-			//alert("Calling Reload Map");
-			reloadMap();
-		} else if(active==1) {
-			reloadTab();
-		} else if(active==2) {
-			alert("Friends!!");
-		}
-	}
-	
-	function initialize() {
-		var mapOptions = {
-			zoom : 13,
-			center : new google.maps.LatLng(37.774546, -122.433523),
-			mapTypeId : google.maps.MapTypeId.ROADMAP
-		};
 
-		map = new google.maps.Map(document.getElementById('tabs-heat'),
-				mapOptions);
-
-		//map.setCenter(new google.maps.LatLng($(this).data('latitude'), $(this).data('longitude')));
-		//map.setCenter(new google.maps.LatLng(51.5072,  0.1275));
-		pointArray = new google.maps.MVCArray(taxiData);
-
-		heatmap = new google.maps.visualization.HeatmapLayer({
-			data : pointArray
-		});
-
-		heatmap.setMap(map);
-	}
-
-	function reloadMap() {
-		var xmlhttp;
-		var cityVal = document.getElementById("citySelect").value;
-		var categoryVal = document.getElementById("categorySelect").value;
-		xmlhttp = new XMLHttpRequest();
-		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
-		xmlhttp.onreadystatechange = function() {
-			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				var responseObj = JSON.parse(xmlhttp.responseText);
-				var pointsArray = responseObj.points;
-				var newMapPointsArray = new Array(pointsArray.length);
-				for (i = 0; i < pointsArray.length; i++) {
-					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
-							pointsArray[i].longitude), weight: pointsArray[i].check_in_info};
-					newMapPointsArray[i] = dataPoint;
-				}
-
-				pointArray = new google.maps.MVCArray(newMapPointsArray);
-				heatmap.setData(pointArray);
-				map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
-						pointsArray[0].longitude));
-			}
-		}
-		xmlhttp.open("GET", url, true);
-		xmlhttp.send();
-	}
-	google.maps.event.addDomListener(window, 'load', initialize);
-  </script>
   <script>
 	//Details tab 
 	var categoryItems, heatmap;
-
-	function reloadTab() {
-		var xmlhttp;
-		var cityVal = document.getElementById("citySelect").value;
-		var categoryVal = document.getElementById("categorySelect").value;
-
-		xmlhttp=new XMLHttpRequest();
-		url="list?city="+cityVal+"&category="+categoryVal+"&index=1";
-		xmlhttp.onreadystatechange=function() {
-			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-				var responseObj = JSON.parse(xmlhttp.responseText); 
-				var categoryItems = responseObj.items;
-				//code to display data
-				var detailsTab = document.getElementById("tab-details");
-				detailsTab.innerHTML = "";
-				for(var i = 0; i < categoryItems.length; i++) {
-					var record = document.createElement("p");
-    				var name = document.createElement("a");
-    				name.style.color='blue';
-    				var bid=categoryItems[i].bid;
-    				var url="details?bid="+bid;
-    				name.setAttribute("href",url);
-    				name.style.fontSize="x-large";
-    				name.textDecoration="underline";
-    				var u=document.createElement("u");
-    				u.fontWeight="900";
-    				u.innerHTML=(i+1)+"."+categoryItems[i].name+"&nbsp;";
-    				name.appendChild(u);
-    				var countstars=categoryItems[i].stars;
-    				var count=parseInt(countstars);
-    				for (var j = 1; j < count; j++) {
-	 					var img = document.createElement("img");
-	 					img.style.height='25px';
-	 					img.style.width='25px';
-	 					img.src = "images/star.png";
-	 					name.appendChild(img);
-					}	
-    				detailsTab.appendChild(name);
-
-    				var add=document.createElement("u");
-    				add.style.fontWeight='bold';
-    				add.innerHTML="Address: ";
-    				add.style.fontSize="medium";
-    				record.appendChild(add);
-    				body=categoryItems[i].address;
-    				b=document.createTextNode(body);
-    				record.appendChild(b);
-    
-    				record.appendChild(document.createElement("br"));
-    				var o=document.createElement("u");
-    				o.style.fontWeight='bold';
-    				o.innerHTML="Open: ";
-    				o.style.fontSize="medium";
-    				record.appendChild(o);
-    				if(categoryItems[i].open== "true") {
-    					body="Yes";
-    				}
-    				else {
-    					body="No";
-				    }		
-    				b=document.createTextNode(body);
-    				record.appendChild(b);
-    				record.appendChild(document.createElement("br"));
-    				var r=document.createElement("u");
-    				r.style.fontWeight='bold';
-    				r.style.fontSize="medium";
-    				r.innerHTML="Review: ";
-    				record.appendChild(r);
-    				body=categoryItems[i].review;
-    				b=document.createTextNode(body);
-    				record.style.fontSize="small";
-    				record.style.lineHeight="1.4";
-    				record.appendChild(b);
-    
-    				 detailsTab.appendChild(record);
- 
-    			}
-			}
-		}
-		xmlhttp.open("GET",url,true);
-		xmlhttp.send();
-	}
 
 	function searchBing() {
 		var queryString = document.getElementById("searchbox").value;
@@ -279,6 +103,11 @@
 							<h1 id="title">DATFORMERS</h1><br\>
 							<p>Adarsh,Aryaa,Deepak,Sruthi</p>
 						</div>
+			
+						<div id="map" style="height: 290px;	margin-left: 12%; margin-right: 12%;padding: 0px"></div> 
+
+
+			
 
 					<!-- Nav -->
 						<nav id="nav">
@@ -333,22 +162,153 @@
 				
 			
 		</section>
-			<div id="main">
+			<div id="main" style=" margin-left:24%;width:auto">
 
-				
-				<!-- Intro -->
-					
-					
-  
-  
-  
-</div>
-					
-			</div>
-
-				
-
+<%
+	OracleDBWrapper dbWrapper = new OracleDBWrapper(
+			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
+			DatabaseUtil.PASSWORD);
+   HashMap<Integer, String> days = new HashMap<Integer, String>();
+		days.put(1, "Sunday");
+		days.put(2, "Monday");
+		days.put(3, "Tuesday");
+		days.put(4, "Wednesday");
+		days.put(5, "Thursday");
+		days.put(6, "Friday");
+		days.put(7, "Saturday");
 		
+		String bid = request.getParameter("bid");
+		String name="";
+		String stars="'";
+		String address="";
+		String lat="";
+		String lon="";
+		String open="";
+		ArrayList<String> reviews = new ArrayList<String>();
+		HashMap<String, String> idReviewMapping = new HashMap<String, String>();
+		HashMap<String, String> idDenseMapping = new HashMap<String, String>();
+
+		String summary="Adarsh is summary";
+		Calendar calendar = Calendar.getInstance();
+		int day = calendar.get(Calendar.DAY_OF_WEEK);
+		String lookingFor=days.get(day);
+		String queryString = "select * "
+				+ "from business inner join businesshours on businesshours.BID = business.bid "
+				+ "where business.bid='"+bid+"' and businesshours.DAY='"+lookingFor+"'";
+		ResultSet set = dbWrapper.executeQuery(queryString);
+		try {
+			while(set.next()){
+				name = set.getString("name");
+				stars = set.getString("stars");
+				address=set.getString("full_address");
+				lat=set.getString("latitude");
+				lon=set.getString("longitude");
+				open=set.getString("open");
+				if(open.equals("true")) open="YES";
+				else open="NO";
+				
+			}
+			ReviewSummary sum = new ReviewSummary(bid, 4);
+			HashMap<String, ArrayList<String>> ret = sum.getReviews();
+			String combinedReviews = "";
+			for ( String key : ret.keySet() ) {
+			    combinedReviews=key;
+			}
+			//summary = sum.getSummary(combinedReviews);
+
+			%>
+			<h2>&nbsp;<%=name %>
+			<% for(int i=0;i<Integer.parseInt(stars);i++) { %>
+			<img src="images/star.png" style="height: 25px; width: 25px;">
+			<% } %>
+			</h2>
+			<p id="summart">&nbsp;"<%=summary %>"</p>
+			<p style="font-size: large; line-height: 1.4;">
+			&nbsp;<u style="font-weight: bold; font-size: x-large;">Address:</u><%=address %><br>
+			&nbsp;<u style="font-weight: bold; font-size: x-large;">Open: </u><%=open 	%><br>
+			&nbsp;<u style="font-weight: bold; font-size: x-large;">Reviews: </u><br>
+			
+			<%
+				reviews = ret.get(combinedReviews);
+				for(int i=0;i<reviews.size();i++){ 
+					String id = reviews.get(i).split("\\$",2)[0];
+					idReviewMapping.put(id,reviews.get(i).split("\\$",2)[1]);
+					idDenseMapping.put(id, "0");
+					}
+					ServletContext context = getServletContext();
+					FileInputStream fstream = new FileInputStream(context.getRealPath("info_dense.txt"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+					String strLine;		
+					//Read File Line By Line
+
+					while ((strLine = br.readLine()) != null)   {
+
+						String id = strLine.split("\\t")[0];
+
+						if(idDenseMapping.containsKey(id)){
+
+							idDenseMapping.put(id,strLine.split("\\t")[1]);
+
+						}
+
+					}
+
+					//Close the input stream
+					br.close();
+					Iterator it = idReviewMapping.entrySet().iterator();
+					while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry)it.next();
+				    %>
+					<% String rating=idDenseMapping.get(pair.getKey());    %>				
+					&nbsp;<%
+					if(Integer.parseInt(rating)==1) { %>
+						<img src="images/tick.jpg" style="height: 25px; width: 25px;"><u>Useful</u>
+					<%}
+					else {%>
+						<img src="images/cross.jpg" style="height: 25px; width: 25px;"><u>Not Useful</u>
+					<%}	
+
+					%><br>
+
+					&nbsp;"<%=pair.getValue() %>"<br><br>
+					
+					
+			<% } %>
+			</p>
+			
+		<%
+			
+			try {
+  				lati = Float.valueOf(lat.trim()).floatValue();
+  				longi = Float.valueOf(lon.trim()).floatValue();
+				}
+			catch (NumberFormatException nfe) 
+			{
+  			System.err.println("NumberFormatException: " + nfe.getMessage());
+  			}
+			dbWrapper.closeConnection();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+%>
+
+   						<script type="text/javascript"> 
+   						
+
+      					var myOptions = {
+         				zoom: 16,
+         				center: new google.maps.LatLng("<%=lati%>", "<%=longi%>"),
+         				mapTypeId: google.maps.MapTypeId.ROADMAP
+      					};
+      					 var myLatlng = new google.maps.LatLng("<%=lati%>","<%=longi%>");	
+    					 var map = new google.maps.Map(document.getElementById("map"), myOptions);
+    					 var marker = new google.maps.Marker({
+   						 position: myLatlng,
+    					map: map,
+    					title:"Hello World!"
+						});
+  						 </script>
 
 	</body>
 </html>

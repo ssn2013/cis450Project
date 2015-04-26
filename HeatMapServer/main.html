@@ -170,8 +170,12 @@
     				var name = document.createElement("a");
     				name.style.color='blue';
     				var bid=categoryItems[i].bid;
-    				var url="details?bid="+bid;
-    				name.setAttribute("href",url);
+    				var url="details.html?bid="+bid;
+    				// name.setAttribute("href","http://yahoo.com");
+    				//name.setAttribute("target","_blank");
+    				name.href=url;
+    				name.target="_blank";
+    				//name.onClick="window.open('http://www.yahoo.com','_blank')";
     				name.style.fontSize="x-large";
     				name.textDecoration="underline";
     				var u=document.createElement("u");
@@ -180,7 +184,7 @@
     				name.appendChild(u);
     				var countstars=categoryItems[i].stars;
     				var count=parseInt(countstars);
-    				for (var j = 1; j < count; j++) {
+    				for (var j = 0; j < count; j++) {
 	 					var img = document.createElement("img");
 	 					img.style.height='25px';
 	 					img.style.width='25px';
@@ -225,6 +229,7 @@
     				record.appendChild(b);
     
     				 detailsTab.appendChild(record);
+    				 
  
     			}
 			}

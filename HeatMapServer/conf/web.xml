@@ -28,13 +28,13 @@
    </servlet-mapping>
    
    <servlet>
-     <servlet-name>DetailsServlet</servlet-name>
-     <servlet-class>com.datformers.servlet.Details</servlet-class> 
+     <servlet-name>Details</servlet-name>
+      <jsp-file>/details.html</jsp-file> 
    </servlet>
    
    <servlet-mapping>
-     <servlet-name>DetailsServlet</servlet-name>
-     <url-pattern>/details</url-pattern>
+     <servlet-name>Details</servlet-name>
+     <url-pattern>/details.html</url-pattern>
    </servlet-mapping>
    
    <servlet>
