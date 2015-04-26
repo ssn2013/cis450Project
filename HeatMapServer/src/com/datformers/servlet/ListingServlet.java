@@ -66,7 +66,7 @@ public class ListingServlet extends HttpServlet {
 		String queryString = "select * "+
 							"from ( select a.*, rownum rnum "+
 							"from ( select * from business inner join categories on categories.bid = business.bid"
-							+ " where business.city='"+city+"' and categories.category='"+category+"' ) a "+
+							+ " where business.city='"+city+"' and categories.category='"+category+"' order by stars desc  ) a "+
 							"where rownum < "+endIndex + " ) where rnum >= "+startIndex;
 		
 		
