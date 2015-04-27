@@ -32,11 +32,11 @@ import com.restfb.types.Post;
 import com.restfb.types.User;
 
 public class FacebookLoginServlet extends HttpServlet{
-	private FbRepository repostory = new FbRepository();
+	private FbRepository repository = new FbRepository();
 	
 	@Override
 	public void destroy() {
-		repostory.destroyConnection();
+		repository.destroyConnection();
 		super.destroy();
 	}
 	
@@ -92,7 +92,7 @@ public class FacebookLoginServlet extends HttpServlet{
 		    System.out.println("Fetched Details about person: "+me.toString());
 		    
 		    //TODO: Enter all information into database
-		    repostory.enterInformation(me);
+		    repository.enterInformation(me);
 		    
 		} catch(Exception e) {
 			System.out.println("Exception: "+e.getMessage());
@@ -104,7 +104,7 @@ public class FacebookLoginServlet extends HttpServlet{
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			if(request.getPathInfo()!=null && request.getPathInfo().contains("facebookfriends")) {
-				User userDetails = repostory.getInformation("", false);
+				User userDetails = repository.getInformation("", false);
 				response.setContentType("text/html");
 				response.getWriter().println(userDetails.toString());
 			}
