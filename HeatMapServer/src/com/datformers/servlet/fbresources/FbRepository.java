@@ -50,7 +50,7 @@ public class FbRepository {
 					wrapper.executeQuery(query1);
 					
 		}else {
-			System.out.println("creating new user");
+			
 			String query1 = "Insert into APPUSER(USER_ID,EMAIL,PASSWORD,FIRST_NAME,LAST_NAME,IS_FACEBOOK_LOGIN)"
 					+ " values (usr_id.NEXTVAL,'"
 					+ user.email
@@ -82,29 +82,30 @@ public class FbRepository {
 				e.printStackTrace();
 			}
 			
-			System.out.println(user_id);
+			
 			if(user_id!=-1) {
-				if(!checkDupEntryFbUsers(user_id,user.fbUserId)) {
-			String FBUserTableQuery = "Insert into FBUSERS(fbuser_id,appuser_id)"
+				if(!checkIfPresent("fbuser_id",user.fbUserId, "FBUSERS")) {
+					String FBUserTableQuery = "Insert into FBUSERS(fbuser_id,appuser_id)"
 					+ " values('"
 					+ user.fbUserId
 					+ "',"
 					+ user_id + ")";
-			System.out.println(FBUserTableQuery);
+			
 			wrapper.executeQuery(FBUserTableQuery);
 				}
 			
-			System.out.println("query happend");
+			
 			}
 //		//storing FB Friends info
 		List<String> friends=user.friends;
-		System.out.println("starting firneds");
+		
 		for(String frnd:friends){
-			if(!checkIfPresent("fbuser_id",frnd, "FBUSERS")) {
+			if(!checkDupEntryFbUsers(user_id,frnd) && checkIfPresent("fbuser_id",frnd, "FBUSERS")) {
 				query="Insert into FBFRIENDS(user_id,friend_id) "
-						+ " values ("
-						+ user_id+","
+						+ " values ('"
+						+ user.fbUserId+"',"
 						+"'"+frnd+"')";
+				System.out.println(query);
 				wrapper.executeQuery(query);
 			}
 			
@@ -114,7 +115,7 @@ public class FbRepository {
 		List<FbPost> posts=user.posts;
 		
 		for(FbPost post:posts) {
-		String query1 = "Insert into FBPOSTS(ID,FBUSER_ID,LOCNAME,CITY,COUNTRY,LATITUDE,LONGITUDE,STATE)"
+		String query1 = "Insert into FBPOSTS(ID,FBUserID,LOCNAME,CITY,COUNTRY,LATITUDE,LONGITUDE,STATE)"
 				+ " values (fbusr_id.NEXTVAL,'"
 				+ user.fbUserId
 				+ "','"
@@ -134,7 +135,7 @@ public class FbRepository {
 		// System.out.println(query1);
 		wrapper.executeQuery(query1);
 		}
-		System.out.println("posts done check done");
+		
 	}
 
 	public User getInformation(String appUserId, boolean FbUserId) {
@@ -154,8 +155,8 @@ public class FbRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	   
-	    if (rowCount!=-1) return true;
+	  
+	    if (rowCount>0) return true;
 	    return false;
 	  }
 	
@@ -175,6 +176,7 @@ public class FbRepository {
 			e.printStackTrace();
 			
 		}
+		
 		if(count>0) return true; 
 		else return false;
 	}	
