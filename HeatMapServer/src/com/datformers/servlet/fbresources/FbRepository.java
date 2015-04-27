@@ -139,10 +139,10 @@ public class FbRepository {
 		
 	}
 
-	public ArrayList<FbUser> getInformation() {
+	public ArrayList<FbUser> getInformation(String fbID, String city_name) {
 		ArrayList<FbUser> friendsDetails = new ArrayList<FbUser>();
-		String fbUserID = "786222628142935";
-		String city = "Philadelphia";
+		String fbUserID = fbID;
+		String city = city_name;
 		ArrayList<String> friendList = new ArrayList<String>();
 		
 		// GET THIS GUYS FRIENDS

@@ -133,7 +133,7 @@ public class FacebookLoginServlet extends HttpServlet{
 				
 				//TODO: populate data of checkins of Facebook friends
 				if(city.equalsIgnoreCase("Philadelphia"))
-					sendDummyData(dataObj);
+					sendDummyData(dataObj, fbUserId, city);
 				else 
 					sendDummyData2(dataObj);
 				
@@ -216,8 +216,8 @@ public class FacebookLoginServlet extends HttpServlet{
 		dataObj.put(user2.fbUserId, obj2);
 	}
 
-	private void sendDummyData(JSONObject dataObj) throws JSONException {
-		ArrayList<FbUser> friendsDetails = repository.getInformation();
+	private void sendDummyData(JSONObject dataObj, String fbUserID, String city) throws JSONException {
+		ArrayList<FbUser> friendsDetails = repository.getInformation(fbUserID, city);
 		
 		/*FbUser user1 = new FbUser();
 		user1.firsName="abc";
