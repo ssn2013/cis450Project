@@ -12,12 +12,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.util.ajax.JSON;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.datformers.servlet.fbresources.FbPost;
@@ -56,8 +59,9 @@ public class FacebookLoginServlet extends HttpServlet{
 			System.out.println("FETCHED JSON: "+requestObject.toString());
 			
 			//fetch data from Facebook
-			fetchDataFromFacebook(requestObject);
+			String userId = fetchDataFromFacebook(requestObject);
 			
+			response.addCookie(new Cookie("fbUserId", userId));
 			response.setContentType("application/json");
 			response.getWriter().println(new JSONObject().toString());
 		} catch (Exception e) {
@@ -66,7 +70,7 @@ public class FacebookLoginServlet extends HttpServlet{
 		}
 	} 
 	
-	private void fetchDataFromFacebook(JSONObject fbResponse) {
+	private String fetchDataFromFacebook(JSONObject fbResponse) {
 		try {
 			
 			System.out.println("Trying to fetch from FB");
@@ -91,12 +95,13 @@ public class FacebookLoginServlet extends HttpServlet{
 		    }
 		    System.out.println("Fetched Details about person: "+me.toString());
 		    
-		    //TODO: Enter all information into database
+		    //Enter all information into database
 		    repository.enterInformation(me);
-		    
+		    return me.fbUserId;
 		} catch(Exception e) {
 			System.out.println("Exception: "+e.getMessage());
 			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -104,16 +109,99 @@ public class FacebookLoginServlet extends HttpServlet{
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			if(request.getPathInfo()!=null && request.getPathInfo().contains("facebookfriends")) {
-				User userDetails = repository.getInformation("", false);
-				response.setContentType("text/html");
-				response.getWriter().println(userDetails.toString());
+				String responseObjKeys[]  = {"status","data"};
+				
+				Cookie[] cookies = request.getCookies();
+				String fbUserId = null;
+				for(Cookie cookie: cookies) {
+					if(cookie.getName().equals("fbUserId")) {
+						System.out.println("GOT COOKIE WITH DETAILS OF FB USER");
+						fbUserId = cookie.getValue().trim();
+					}
+				}
+				response.setContentType("application/json");
+				JSONObject responseObject = new JSONObject();
+				if(fbUserId == null) {
+					responseObject.put(responseObjKeys[0], "FAILED");
+					responseObject.put(responseObjKeys[1], new JSONObject());
+					response.getWriter().println(responseObject.toString());
+					return;
+				}
+				responseObject.put(responseObjKeys[0], "OK");
+				JSONObject dataObj = new JSONObject();
+				
+				//TODO: populate data of checkins of Facebook friends
+				sendDummyData(dataObj);
+				
+				responseObject.put(responseObjKeys[1], dataObj);
+				response.getWriter().println(responseObject.toString());
 			}
 		} catch(IOException ioe) {
 			ioe.printStackTrace();
+		} catch (JSONException je) {
+			je.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	private void sendDummyData(JSONObject dataObj) throws JSONException {
+		FbUser user1 = new FbUser();
+		user1.firsName="abc";
+		user1.lastName="def";
+		user1.fbUserId="1234";
+		FbUser user2 = new FbUser();
+		user2.firsName="xyz";
+		user2.lastName="dfe";
+		user2.fbUserId="12345";
+		FbPost p1 = new FbPost();
+		p1.locationName = "Location1";
+		p1.state = "Pennsylvania";
+		p1.city = "Philadelphia";
+		p1.latitude = 39.953208;
+		p1.longitude = -75.166816;
+		p1.country = "USA";
+		FbPost p2 = new FbPost();
+		p2.locationName = "Location2";
+		p2.state = "Pennsylvania";
+		p2.city = "Philadelphia";
+		p2.latitude = 39.953619;
+		p2.longitude = -75.162905;
+		p2.country = "USA";
+		FbPost p3 = new FbPost();		
+		p3.locationName = "Location3";
+		p3.state = "Pennsylvania";
+		p3.city = "Philadelphia";
+		p3.latitude = 39.948725;
+		p3.longitude = -75.167357;
+		p3.country = "USA";
+		List<FbPost> userSets = new ArrayList<FbPost>();
+		userSets.add(p1);
+		userSets.add(p2);
+		user1.setPosts(new ArrayList<>(userSets));
+		userSets.clear();
+		userSets.add(p3);
+		user2.setPosts(userSets);
+		
+		//Format data
+		JSONObject obj1 = new JSONObject();
+		obj1.put("name", user1.firsName+" "+user1.lastName);
+		JSONArray places1 = new JSONArray();
+		for(FbPost post: user1.posts) {
+			places1.put(post.toJSON());
+		}
+		obj1.put("tags", places1);
+		dataObj.put(user1.fbUserId, obj1);
+		
+		JSONObject obj2 = new JSONObject();
+		obj2.put("name", user2.firsName+" "+user2.lastName);
+		JSONArray places2 = new JSONArray();
+		for(FbPost post: user2.posts) {
+			places2.put(post.toJSON());
+		}
+		obj2.put("tags", places2);
+		dataObj.put(user2.fbUserId, obj2);
 	}
 
 }

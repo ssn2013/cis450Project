@@ -1,5 +1,8 @@
 package com.datformers.servlet.fbresources;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.restfb.types.Location;
 import com.restfb.types.Post;
 
@@ -37,5 +40,15 @@ state varchar(50),
 	@Override
 	public String toString() {
 		return "POST: LocationName: "+locationName+" City: "+city+" State: "+state+" Country: "+country+" Lat: "+latitude+" Long: "+longitude;
+	}
+	public JSONObject toJSON() throws JSONException {
+		JSONObject object = new JSONObject();
+		object.put("locationName", locationName);
+		object.put("city",city);
+		object.put("country",country);
+		object.put("state",state);
+		object.put("latitude",latitude);
+		object.put("longitude",longitude);
+		return object;
 	}
 }
