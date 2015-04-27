@@ -94,7 +94,7 @@
     
    <servlet-mapping>
      <servlet-name>FacebookLoginServlet</servlet-name>
-     <url-pattern>/fblogin</url-pattern>
+     <url-pattern>/fblogin/*</url-pattern>
    </servlet-mapping>
 
 </web-app>
