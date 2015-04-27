@@ -24,7 +24,7 @@ public class ListingServlet extends HttpServlet {
 	private OracleDBWrapper dbWrapper = new OracleDBWrapper(
 			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
 			DatabaseUtil.PASSWORD);
-
+	public MongoDBWrapper mdb=null;
 	
 	
 	@Override
@@ -73,10 +73,11 @@ public class ListingServlet extends HttpServlet {
 		ResultSet set = dbWrapper.executeQuery(queryString);
 		JSONArray ja = new JSONArray();
 
-		MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
+		if(mdb==null) {
+			mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
 				"Reviews");
-		mdb.createConnection();
-
+			mdb.createConnection();
+		}
 		try {
 			while (set.next()) {
 				bid = set.getString("bid");
@@ -104,7 +105,7 @@ public class ListingServlet extends HttpServlet {
 			mainObj.put("items", ja);
 			response.setContentType("application/json");
 			response.getWriter().println(mainObj.toString());
-			mdb.closeConnection();
+			
 
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
@@ -112,5 +113,8 @@ public class ListingServlet extends HttpServlet {
 		}
 
 	}
-
+	@Override
+	public void destroy() {
+		mdb.closeConnection();
+	}
 }

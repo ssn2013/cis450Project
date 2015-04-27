@@ -237,11 +237,11 @@
 	var friendsCheckins;
 	function loadFriendsCheckins() {
 
-		alert("POINT1");
+		
 		document.getElementById("tabs-friends").innerHtml ="Please wait...";				
 		var xmlhttp;
 
-		alert("POINT2");
+		
 		var cityVal = document.getElementById("citySelect").value;
 		var categoryVal = document.getElementById("categorySelect").value;
 		xmlhttp = new XMLHttpRequest();
@@ -250,15 +250,15 @@
 		url = "fblogin/facebookfriends?city=" + cityVal;
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-				alert("RESPONSE GOT");
+				
 				var responseObj = JSON.parse(xmlhttp.responseText);
 				var status = responseObj.status;
 				var data = responseObj.data;
-				alert("STATUS: "+status);
+				
 				var friendsDiv = document.getElementById("tabs-friends")
 				if(status=="OK") {
 					if(!friendsMap) {
-						alert("friends map already not defined");
+						
 						var mapOptions = {
 							zoom : 12,
 							mapTypeId : google.maps.MapTypeId.ROADMAP,
@@ -266,7 +266,7 @@
 						friendsMap = new google.maps.Map(document.getElementById('tabs-friends'),	mapOptions);
 						addMarkersForCheckins(data, friendsMap)
 					}else {
-						alert("friends map already defined");
+						
 					}
 				} else {
 					friendsDiv.innerHtml="This feature is not available";				
@@ -275,7 +275,7 @@
 		}
 		xmlhttp.open("GET", url, true);
 		xmlhttp.send();
-		alert("SENT DATA");
+		
 	}
 	
 	var markers = [];
@@ -304,7 +304,7 @@
 				});
 				
 				markers.push(marker);			
-				alert("Adding marker for: lat: "+tags[i].latitude+" long: "+tags[i].longitude+" name: "+tags[i].locationName+" friend: "+name);
+			
 			}
 		}
 		mapForMarker.setCenter(new google.maps.LatLng((sumLat/count), (sumLong/count)));

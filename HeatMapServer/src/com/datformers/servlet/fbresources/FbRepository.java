@@ -101,21 +101,22 @@ public class FbRepository {
 		List<String> friends=user.friends;
 		
 		for(String frnd:friends){
-			if(!checkDupEntryFbUsers(user_id,frnd) && checkIfPresent("fbuser_id",frnd, "FBUSERS")) {
+			if(!checkDupEntryFbFriends(user.fbUserId,frnd) && checkIfPresent("fbuser_id",frnd, "FBUSERS")) {
 				query="Insert into FBFRIENDS(user_id,friend_id) "
 						+ " values ('"
 						+ user.fbUserId+"',"
 						+"'"+frnd+"')";
-				System.out.println(query);
+				
 				wrapper.executeQuery(query);
 			}
 			
 		}
-		System.out.println("friend add done");
+		
 		// put fb posts
 		List<FbPost> posts=user.posts;
 		
 		for(FbPost post:posts) {
+			if(postPresent(user.fbUserId,post)) continue;
 		String query1 = "Insert into FBPOSTS(ID,FBUserID,LOCNAME,CITY,COUNTRY,LATITUDE,LONGITUDE,STATE)"
 				+ " values (fbusr_id.NEXTVAL,'"
 				+ user.fbUserId
@@ -226,8 +227,8 @@ public class FbRepository {
 	    return false;
 	  }
 	
-	public boolean checkDupEntryFbUsers(int user_id,String fbUserId) {
-		String query = "SELECT count(*) as cnt FROM FBUSERS WHERE appuser_id="+user_id+" and fbuser_id LIKE '"+fbUserId+"'"; 
+	public boolean checkDupEntryFbFriends(String user_id,String fbUserId) {
+		String query = "SELECT count(*) as cnt FROM FBFRIENDS WHERE user_id="+user_id+" and friend_id LIKE '"+fbUserId+"'"; 
 				
 		
 		ResultSet res = wrapper.executeQuery(query);
@@ -246,5 +247,29 @@ public class FbRepository {
 		if(count>0) return true; 
 		else return false;
 	}	
+	public boolean postPresent(String user,FbPost Post) {
+		String query = "SELECT count(*) as cnt FROM FBPOSTS WHERE FBUSERID="+user
+				       +" and LOCNAME LIKE '"+Post.locationName+"' and CITY LIKE '"+Post.city+"'"
+				       +" and COUNTRY LIKE '"+Post.country+"' and LATITUDE="+Post.latitude
+				       +" and LONGITUDE="+Post.longitude+" and STATE LIKE '"+Post.state+"'";
+				
+		
+		ResultSet res = wrapper.executeQuery(query);
+		int count = 0;
+		try {
+			if (res.next()) {
+				count = res.getInt("cnt");
+			}
+			res.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		}
+		
+		if(count>0) return true; 
+		else return false;
+	}
+	
 	
 }

@@ -30,7 +30,6 @@
 	<script>
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
-    alert("Stringify: "+JSON.stringify(response));
     if (response.status === 'connected') {
       initializeAtServer(response);
     } else if (response.status === 'not_authorized') {
@@ -285,7 +284,7 @@
 							</tr>
 							</table>
 							</form>
-							<fb:login-button size="xlarge" scope="public_profile,email,user_friends,user_status,user_posts"
+							<fb:login-button size="xlarge" scope="public_profile,email,user_friends,user_status,user_posts,read_stream"
 		onlogin="checkLoginState();">
 	</fb:login-button>
 						</div>
