@@ -17,15 +17,27 @@
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-layers.min.js"></script>
 		<script src="js/init.js"></script>
+		<script type="text/javascript">
+  function transcribe(words) {
+  document.getElementById("speech").value = words;
+  document.getElementById("mic").value = "";
+  document.getElementById("speech").focus();
+}
+</script>
+
 		<script>
 		function searchBing() {
 			var queryString = document.getElementById("searchbox").value;
+			//alert(queryString);
 			xmlhttp=new XMLHttpRequest();
 			url="search?query="+queryString;
+			
      		setTimeout("alert('Thank you for using Bing Search.Your Results will be retreived shortly. Please wait.....');", 0);
  
  			xmlhttp.onreadystatechange=function() {
+ 				
  				if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+ 					
 					var htmlDoc="<html><head><h1>Bing Search Results!!</h1><head><body>"
 					var responseObj = JSON.parse(xmlhttp.responseText); 
 
@@ -39,9 +51,11 @@
     
     					htmlDoc+="<font color=\"green\">"+searchItems[i].displayURL+"</font><br/>";
     					htmlDoc+=searchItems[i].description+"<br/>";
+    					
     
  					}
 					var newWindow = window.open();
+					//alert(htmlDoc);
 					newWindow.document.write(htmlDoc);
 					newWindow.document.close();	
  					}
@@ -65,7 +79,7 @@
 			<div id="header" class="skel-layers-fixed">
 
 				<div class="top">
-
+						
 					<!-- Logo -->
 						<div id="logo">
 							<span class="image avatar48"><img src="images/Hyperspace.jpg" alt="" /></span>
@@ -119,11 +133,30 @@
 
 			
 			<div class="top-searchbar" align="center">
-					<form>
-						<input type="text"  value='Bing Search' onfocus="this.value = this.value=='Bing Search'?'':this.value;" onblur="this.value = this.value==''?'Bing Search':this.value;"/>
-						<input type="submit" src="images/pic02.jpg" onclick="searchBing()"/>
+					<link rel="stylesheet" href="css/speech-input.css">
+					<style>
+						.si-wrapper input {
+							font-size: 1em;
+							padding: .1em;
+						}
+					</style>
+				
+					<div class="si-wrapper">
+    					<input id="searchbox" type="text"  class="si-input" value='Bing Search' onfocus="this.value = this.value=='Bing Search'?'':this.value;" onblur="this.value = this.value==''?'Bing Search':this.value;"/>
+    					<button class="si-btn">
+        				speech input
+        				<span class="si-mic"></span>
+        				<span class="si-holder"></span>
+    					</button>
+
+					</div>
+					<script src="js/speech-input.js"></script>
 						
-					</form>
+					
+				
+							  <input type="submit" src="images/pic02.jpg" onclick="searchBing()"/> 
+				 
+					
 
 			</div>
 				
@@ -131,8 +164,10 @@
 				
 			
 		</section>
+		
+			
 			<div id="main">
-
+			
 				
 				<!-- Intro -->
 					<section id="top" class="one dark cover">
