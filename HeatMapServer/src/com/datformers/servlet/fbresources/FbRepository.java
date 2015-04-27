@@ -3,6 +3,7 @@ package com.datformers.servlet.fbresources;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.datformers.database.OracleDBWrapper;
@@ -138,8 +139,73 @@ public class FbRepository {
 		
 	}
 
-	public User getInformation(String appUserId, boolean FbUserId) {
-		return null;
+	public ArrayList<FbUser> getInformation() {
+		ArrayList<FbUser> friendsDetails = new ArrayList<FbUser>();
+		String fbUserID = "786222628142935";
+		String city = "Philadelphia";
+		ArrayList<String> friendList = new ArrayList<String>();
+		
+		// GET THIS GUYS FRIENDS
+		String getFriendsQuery = "select FRIEND_ID from fbfriends where USER_ID='"+fbUserID+"'";
+		ResultSet rs =wrapper.executeQuery(getFriendsQuery);
+		try {
+			while(rs.next()){
+				friendList.add(rs.getString("FRIEND_ID"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		for(int i=0;i<friendList.size();i++){
+			List<FbPost> userPostSet = new ArrayList<FbPost>();
+			String appID = "";
+			String getAppUserQuery = "select * from fbusers where FBUSER_ID='"+friendList.get(i)+"'";
+			rs = wrapper.executeQuery(getAppUserQuery);
+			try {
+				if(rs.next()){
+					appID = rs.getString("APPUSER_ID");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			String userDetailsQuery = "select * from appuser where USER_ID='"+appID+"'";
+			rs = wrapper.executeQuery(userDetailsQuery);
+			FbUser friend = new FbUser();
+			try {
+				if(rs.next()){
+					friend.firsName = rs.getString("FIRST_NAME");
+					friend.lastName = rs.getString("LAST_NAME");
+					friend.email = rs.getString("EMAIL");
+					friend.fbUserId = friendList.get(i);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			String postsQuery = "select * from fbposts where FBUSERID='"+friendList.get(i)+"' and CITY='"+city+"'";
+			rs=wrapper.executeQuery(postsQuery);
+			
+			try {
+				while(rs.next()){
+					FbPost post = new FbPost();
+					post.locationName = rs.getString("LOCNAME");
+					post.state = rs.getString("STATE");
+					post.city = rs.getString("CITY");
+					post.latitude = Double.parseDouble(rs.getString("LATITUDE"));
+					post.longitude = Double.parseDouble(rs.getString("LONGITUDE"));
+					post.country = rs.getString("COUNTRY");
+					userPostSet.add(post);
+				}
+				friend.setPosts(new ArrayList<>(userPostSet));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			friendsDetails.add(friend);
+		}
+		
+		return friendsDetails;
 	}
 	public boolean checkIfPresent(String field,String userId,String tablename ) {
 	    // select the number of rows in the table

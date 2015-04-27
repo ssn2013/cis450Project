@@ -217,7 +217,9 @@ public class FacebookLoginServlet extends HttpServlet{
 	}
 
 	private void sendDummyData(JSONObject dataObj) throws JSONException {
-		FbUser user1 = new FbUser();
+		ArrayList<FbUser> friendsDetails = repository.getInformation();
+		
+		/*FbUser user1 = new FbUser();
 		user1.firsName="abc";
 		user1.lastName="def";
 		user1.fbUserId="1234";
@@ -252,10 +254,21 @@ public class FacebookLoginServlet extends HttpServlet{
 		user1.setPosts(new ArrayList<>(userSets));
 		userSets.clear();
 		userSets.add(p3);
-		user2.setPosts(userSets);
+		user2.setPosts(userSets);*/
 		
+		
+		for(int i=0;i<friendsDetails.size();i++){
+			JSONObject obj1 = new JSONObject();
+			obj1.put("name", friendsDetails.get(i).firsName+" "+friendsDetails.get(i).lastName);
+			JSONArray places1 = new JSONArray();
+			for(FbPost post: friendsDetails.get(i).posts) {
+				places1.put(post.toJSON());
+			}
+			obj1.put("tags", places1);
+			dataObj.put(friendsDetails.get(i).fbUserId, obj1);
+		}
 		//Format data
-		JSONObject obj1 = new JSONObject();
+		/*JSONObject obj1 = new JSONObject();
 		obj1.put("name", user1.firsName+" "+user1.lastName);
 		JSONArray places1 = new JSONArray();
 		for(FbPost post: user1.posts) {
@@ -271,7 +284,9 @@ public class FacebookLoginServlet extends HttpServlet{
 			places2.put(post.toJSON());
 		}
 		obj2.put("tags", places2);
-		dataObj.put(user2.fbUserId, obj2);
+		dataObj.put(user2.fbUserId, obj2);*/
+	
+
 	}
 
 }
