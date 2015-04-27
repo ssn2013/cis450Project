@@ -245,6 +245,8 @@
 		var cityVal = document.getElementById("citySelect").value;
 		var categoryVal = document.getElementById("categorySelect").value;
 		xmlhttp = new XMLHttpRequest();
+		if(cityVal!="Las Vegas")
+			cityVal = "Philadelphia";
 		url = "fblogin/facebookfriends?city=" + cityVal;
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -259,7 +261,6 @@
 						alert("friends map already not defined");
 						var mapOptions = {
 							zoom : 12,
-							center : new google.maps.LatLng(39.952584, -75.165222),
 							mapTypeId : google.maps.MapTypeId.ROADMAP,
 						};
 						friendsMap = new google.maps.Map(document.getElementById('tabs-friends'),	mapOptions);
@@ -278,28 +279,36 @@
 	}
 	
 	var markers = [];
+	var infoWindows = [];
 	var marker;
 	var myLatlng;
 	function addMarkersForCheckins(data, mapForMarker) {
+		var sumLat = 0;
+		var sumLong = 0;
+		var count = 0;
 		for(var userId in data) {
 			var userData = data[userId];
 			var name = userData.name;
 			var tags = userData.tags;
 			for (i = 0; i < tags.length; i++) {
-				
+				count++;
+				sumLat+=parseFloat(tags[i].latitude);
+				sumLong+=parseFloat(tags[i].longitude);
 				myLatlng = new google.maps.LatLng(parseFloat(tags[i].latitude),parseFloat(tags[i].longitude));
 				marker = new google.maps.Marker({
    					position: myLatlng,
     				map: mapForMarker,
     				draggable:false,
     				visible: true,
-    				title:tags[i].locationName+" "+tags[i].latitude+" "+tags[i].longitude
+    				title:tags[i].locationName+" (Checked in by: "+name+")"
 				});
 				
 				markers.push(marker);			
 				alert("Adding marker for: lat: "+tags[i].latitude+" long: "+tags[i].longitude+" name: "+tags[i].locationName+" friend: "+name);
 			}
 		}
+		mapForMarker.setCenter(new google.maps.LatLng((sumLat/count), (sumLong/count)));
+		
 	}
   </script>
   <script>

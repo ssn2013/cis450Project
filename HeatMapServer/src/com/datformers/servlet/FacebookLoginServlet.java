@@ -110,6 +110,7 @@ public class FacebookLoginServlet extends HttpServlet{
 		try {
 			if(request.getPathInfo()!=null && request.getPathInfo().contains("facebookfriends")) {
 				String responseObjKeys[]  = {"status","data"};
+				String city = request.getParameter("city");
 				
 				Cookie[] cookies = request.getCookies();
 				String fbUserId = null;
@@ -131,7 +132,10 @@ public class FacebookLoginServlet extends HttpServlet{
 				JSONObject dataObj = new JSONObject();
 				
 				//TODO: populate data of checkins of Facebook friends
-				sendDummyData(dataObj);
+				if(city.equalsIgnoreCase("Philadelphia"))
+					sendDummyData(dataObj);
+				else 
+					sendDummyData2(dataObj);
 				
 				responseObject.put(responseObjKeys[1], dataObj);
 				response.getWriter().println(responseObject.toString());
@@ -144,6 +148,72 @@ public class FacebookLoginServlet extends HttpServlet{
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	private void sendDummyData2(JSONObject dataObj) throws JSONException {
+		FbUser user1 = new FbUser();
+		user1.firsName="abc";
+		user1.lastName="def";
+		user1.fbUserId="1234";
+		FbUser user2 = new FbUser();
+		user2.firsName="xyz";
+		user2.lastName="dfe";
+		user2.fbUserId="12345";
+		FbPost p1 = new FbPost();
+		p1.locationName = "Location1";
+		p1.state = "California";
+		p1.city = "Las Vegas";
+		p1.latitude = 36.171278;
+		p1.longitude = -115.143124;
+		p1.country = "USA";
+		FbPost p2 = new FbPost();
+		p2.locationName = "Location2";
+		p2.state = "California";
+		p2.city = "Las Vegas";
+		p2.latitude = 36.168247;
+		p2.longitude = -115.145313;
+		p2.country = "USA";
+		FbPost p3 = new FbPost();		
+		p3.locationName = "Location3";
+		p3.state = "California";
+		p3.city = "Las Vegas";
+		p3.latitude = 36.170187;
+		p3.longitude = -115.135056;
+		p3.country = "USA";
+		FbPost p4 = new FbPost();		
+		p4.locationName = "Location3";
+		p4.state = "California";
+		p4.city = "Las Vegas";
+		p4.latitude = 36.165666;
+		p4.longitude =  -115.136826;
+		p4.country = "USA";
+		List<FbPost> userSets = new ArrayList<FbPost>();
+		userSets.add(p1);
+		userSets.add(p2);
+		user1.setPosts(new ArrayList<>(userSets));
+		userSets.clear();
+		userSets.add(p3);
+		userSets.add(p4);
+		user2.setPosts(userSets);
+		
+		//Format data
+		JSONObject obj1 = new JSONObject();
+		obj1.put("name", user1.firsName+" "+user1.lastName);
+		JSONArray places1 = new JSONArray();
+		for(FbPost post: user1.posts) {
+			places1.put(post.toJSON());
+		}
+		obj1.put("tags", places1);
+		dataObj.put(user1.fbUserId, obj1);
+		
+		JSONObject obj2 = new JSONObject();
+		obj2.put("name", user2.firsName+" "+user2.lastName);
+		JSONArray places2 = new JSONArray();
+		for(FbPost post: user2.posts) {
+			places2.put(post.toJSON());
+		}
+		obj2.put("tags", places2);
+		dataObj.put(user2.fbUserId, obj2);
 	}
 
 	private void sendDummyData(JSONObject dataObj) throws JSONException {
