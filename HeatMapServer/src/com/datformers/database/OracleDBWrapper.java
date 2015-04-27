@@ -33,14 +33,16 @@ public class OracleDBWrapper {
 	public ResultSet executeQuery(String query) {
 		 Statement stmt;
 		 ResultSet rs = null;
+		 
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
-		} catch (SQLException e) {
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+		
 			return rs;
 	}
 	public void closeConnection() {

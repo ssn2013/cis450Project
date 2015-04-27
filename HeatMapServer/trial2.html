@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Facebook Login JavaScript Example</title>
+<meta charset="UTF-8">
+</head>
+<body>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+	<script>
+  // This is called with the results from from FB.getLoginStatus().
+  function statusChangeCallback(response) {
+    alert("Stringify: "+JSON.stringify(response));
+    if (response.status === 'connected') {
+      initializeAtServer(response);
+    } else if (response.status === 'not_authorized') {
+      alert("FB Login Unsuccessful");
+    } else {
+      alert("FB Login Unsuccessful"); 
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+  window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '915394051816905',
+    cookie     : true,  // enable cookies to allow the server to access 
+                        // the session
+    xfbml      : true,  // parse social plugins on this page
+    version    : 'v2.2' // use version 2.2
+  });
+  };
+
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+  
+  function initializeAtServer(fbresponse) {
+  		var xmlhttp;
+		xmlhttp = new XMLHttpRequest();
+		var url = "fblogin";
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				if (this.getResponseHeader('REQUIRES_AUTH') === '1'){
+                	window.location.href = 'main.html'; 
+            	}
+            	else {
+	                alert("Authorization failed at the app side");
+            	}	
+            }
+		}
+		xmlhttp.open("POST", url, true);
+		xmlhttp.setRequestHeader("Content-Type", "application/json");
+		xmlhttp.send(JSON.stringify(fbresponse));
+  }
+</script>
+
+	<!--
+  Below we include the Login Button social plugin. This button uses
+  the JavaScript SDK to present a graphical Login button that triggers
+  the FB.login() function when clicked.
+-->
+	<fb:login-button scope="public_profile,email,user_friends,user_status,user_posts"
+		onlogin="checkLoginState();">
+	</fb:login-button>
+</body>
+</html>
