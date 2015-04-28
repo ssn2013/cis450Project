@@ -124,7 +124,8 @@ public class LoginServlet extends HttpServlet {
 						AddAppUser tmp = new AddAppUser(query1);
 						tmp.addUser();
 						tmp.closeDb();
-						out.println("<html><head><body><h3>Registration Successful!</h3></body></head>");
+						response.sendRedirect("main.html");
+						//out.println("<html><head><body><h3>Registration Successful!</h3></body></head>");
 					}
 				}
 

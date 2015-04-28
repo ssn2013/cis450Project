@@ -95,7 +95,7 @@
 		var active = $("#tabs").tabs( "option", "active" );
 		//alert("ACTIVE TAB: "+active);
 		//if(active==0) {
-			//alert("Calling Reload Map");
+			//alert("Calling Reload );
 			reloadMap();
 		//} else if(active==1) {
 			reloadTab(index);
@@ -109,6 +109,7 @@
 		var categoryVal = "Restaurants";
 		xmlhttp = new XMLHttpRequest();
 		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
+		var topChekinPoints = new Array(5);
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				var responseObj = JSON.parse(xmlhttp.responseText);
@@ -122,6 +123,9 @@
 					newMapPointsArray[i] = dataPoint;
 					latSum = latSum + pointsArray[i].latitude
 					lonSum = lonSum + pointsArray[i].longitude
+					if (i<5){
+						topChekinPoints[i] = pointsArray[i];
+					}
 				}
 				var mapOptions = {
 						zoom : 12,
@@ -136,13 +140,13 @@
 				heatmap = new google.maps.visualization.HeatmapLayer({
 					data : pointArray
 				});
-				
+				var curLat = 40.3606177;
+				//var cutLog = 
+				addMarker(topChekinPoints,map);
 				heatmap.set('opacity',0.9);
 				heatmap.set('radius', 18);
 				heatmap.setMap(map);
-				//heatmap.setData(pointArray);
-				//map.setCenter(new google.maps.LatLng(pointsArray[0].latitude,
-						//pointsArray[0].longitude));
+				
 			}
 		}
 		xmlhttp.open("GET", url, true);
@@ -168,6 +172,39 @@
 
 		heatmap.setMap(map);*/
 	}
+	
+	function addMarker(topChekinPoints) {
+		  // alert(topChekinPoints.length);
+		   var infoWindow = new google.maps.InfoWindow();
+		    for (var i = 0; i < topChekinPoints.length; i++){
+		    	var myLatlng = new google.maps.LatLng(topChekinPoints[i].latitude,topChekinPoints[i].longitude);	
+		    	 //alert(topChekinPoints[i].latitude+":"+topChekinPoints[i].longitude+":"+topChekinPoints[i].check_in_info);
+		    	 var marker = new google.maps.Marker({
+				    position: myLatlng,
+					map: map,
+					title:"Name:" + topChekinPoints[i].name + "; CheckIns:" + topChekinPoints[i].check_in_info
+					});   
+			}
+		}
+	
+	
+	function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+		  var R = 6371; // Radius of the earth in km
+		  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+		  var dLon = deg2rad(lon2-lon1); 
+		  var a = 
+		    Math.sin(dLat/2) * Math.sin(dLat/2) +
+		    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+		    Math.sin(dLon/2) * Math.sin(dLon/2)
+		    ; 
+		  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+		  var d = R * c; // Distance in km
+		  return d;
+		}
+
+		function deg2rad(deg) {
+		  return deg * (Math.PI/180)
+		}
 	function toggleHeatmap() {
 		  heatmap.setMap(heatmap.getMap() ? null : map);
 		}
@@ -208,12 +245,14 @@
 		var categoryVal = document.getElementById("categorySelect").value;
 		xmlhttp = new XMLHttpRequest();
 		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
+		var topChekinPoints = new Array(5);
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				var responseObj = JSON.parse(xmlhttp.responseText);
 				var pointsArray = responseObj.points;
 				var latSum = 0
 				var lonSum = 0
+				
 				var newMapPointsArray = new Array(pointsArray.length);
 				for (i = 0; i < pointsArray.length; i++) {
 					var dataPoint = {location: new google.maps.LatLng(pointsArray[i].latitude,
@@ -221,19 +260,37 @@
 					newMapPointsArray[i] = dataPoint;
 					latSum = latSum + pointsArray[i].latitude
 					lonSum = lonSum + pointsArray[i].longitude
+					if (i<5){
+						topChekinPoints[i] = pointsArray[i];
+					}
 				}
 
 				pointArray = new google.maps.MVCArray(newMapPointsArray);
 				heatmap.setData(pointArray);
 				map.setCenter(new google.maps.LatLng(latSum/pointsArray.length,
 						lonSum/pointsArray.length));
+				addMarker(topChekinPoints,map);
 			}
 		}
 		xmlhttp.open("GET", url, true);
 		xmlhttp.send();
+		
+	}
+	
+	function addMarker(topChekinPoints) {
+	   // alert(topChekinPoints.length);
+	   var infoWindow = new google.maps.InfoWindow();
+	    for (var i = 0; i < topChekinPoints.length; i++){
+	    	var myLatlng = new google.maps.LatLng(topChekinPoints[i].latitude,topChekinPoints[i].longitude);	
+	    	 //alert(topChekinPoints[i].latitude+":"+topChekinPoints[i].longitude+":"+topChekinPoints[i].check_in_info);
+	    	 var marker = new google.maps.Marker({
+			    position: myLatlng,
+				map: map,
+				title:"Name:" + topChekinPoints[i].name + "; CheckIns:" + topChekinPoints[i].check_in_info
+				});   
+		}
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
-	
 	var friendsCheckins;
 	function loadFriendsCheckins() {
 
@@ -442,6 +499,129 @@
  		xmlhttp.send();
 	}
 	</script>
+	
+	<script>
+	
+	var lat = 39.9500;
+	var lon = -75.1900;
+	//var lat2 = 40.3955488;
+	//var lon2 = -80.0350933;
+	function getLocation() {
+	    if (navigator.geolocation) {
+	        navigator.geolocation.getCurrentPosition(showPosition);
+	        //setTimeout("alert('Your Results will be retreived shortly. Please wait.....');", 5);
+	    } else { 
+	        alert("Geolocation is not supported by this browser.");
+	    }
+	}
+
+	function showPosition(position) {
+	   //setTimeout("alert('Your Results will be retreived shortly. Please wait.....');", 5);
+	   //alert(position.coords.latitude + ":" + position.coords.longitude);
+	   //lat = position.coords.latitude;
+	   //lon = position.coords.longitude;	
+	}
+	function plotRoutes(){
+		getLocation();	
+		reloadPoints(1);
+	}
+	
+	function reloadPoints() {
+		var xmlhttp;
+		var categoryVal = document.getElementById("categorySelect").value;
+		//alert(categoryVal);
+		xmlhttp=new XMLHttpRequest();
+		url="list?lat="+lat+"&lon="+lon+"&category="+categoryVal;
+		//alert(url);
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				var responseObj = JSON.parse(xmlhttp.responseText); 
+				var categoryItems = responseObj.items;
+				//code to display data
+				var detailsTab = document.getElementById("tab-route");
+				detailsTab.innerHTML = "";
+				for(var i = 0; i < categoryItems.length; i++) {
+					var record = document.createElement("p");
+    				var name = document.createElement("a");
+    				name.style.color='blue';
+    				var bid=categoryItems[i].bid;
+    				var url1="route.html?lat1="+lat+"&lon1="+lon+"&bid="+bid;
+    				//alert(url1);
+    				// name.setAttribute("href","http://yahoo.com");
+    				//name.setAttribute("target","_blank");
+    				name.href=url1;
+    				name.target="_blank";
+    				//name.onClick="window.open('http://www.yahoo.com','_blank')";
+    				name.style.fontSize="x-large";
+    				name.textDecoration="underline";
+    				var u=document.createElement("u");
+    				u.fontWeight="900";
+    				u.innerHTML=(i+1)+"."+categoryItems[i].name+"&nbsp;";
+    				name.appendChild(u);
+    				var countstars=categoryItems[i].stars;
+    				var count=parseInt(countstars);
+    				for (var j = 0; j < count; j++) {
+	 					var img = document.createElement("img");
+	 					img.style.height='25px';
+	 					img.style.width='25px';
+	 					img.src = "images/star.png";
+	 					name.appendChild(img);
+					}	
+    				detailsTab.appendChild(name);
+
+    				var add=document.createElement("u");
+    				add.style.fontWeight='bold';
+    				add.innerHTML="Address: ";
+    				add.style.fontSize="medium";
+    				record.appendChild(add);
+    				body=categoryItems[i].address;
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
+    
+    				record.appendChild(document.createElement("br"));
+    				var o=document.createElement("u");
+    				o.style.fontWeight='bold';
+    				o.innerHTML="Open: ";
+    				o.style.fontSize="medium";
+    				record.appendChild(o);
+    				if(categoryItems[i].open== "true") {
+    					body="Yes";
+    				}
+    				else {
+    					body="No";
+				    }		
+    				b=document.createTextNode(body);
+    				record.appendChild(b);
+    				record.appendChild(document.createElement("br"));
+    				var r=document.createElement("u");
+    				r.style.fontWeight='bold';
+    				r.style.fontSize="medium";
+    				r.innerHTML="Review: ";
+    				record.appendChild(r);
+    				body=categoryItems[i].review;
+    				b=document.createTextNode(body);
+    				record.style.fontSize="small";
+    				record.style.lineHeight="1.4";
+    				record.appendChild(b);
+    
+    				 detailsTab.appendChild(record);
+ 
+    			}
+    			var div = document.createElement("div");
+    			div.align="center";
+    			var but = document.createElement("button");
+    			but.type="button";
+    			var tmp="giveThisGuyAName("+c+")";
+    			but.setAttribute("onClick",tmp);
+    			but.innerHTML="More";
+    			div.appendChild(but);
+    			detailsTab.appendChild(div);
+			}
+		}
+		xmlhttp.open("GET",url,true);
+		xmlhttp.send();
+	}
+	</script>
   
 
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
@@ -578,21 +758,21 @@
     <li><a href="#tabs-heat">Heat Map</a></li>
     <li><a href="#tab-details">Details</a></li>
     <li><a href="#tabs-friends" onclick="loadFriendsCheckins()">Friends</a></li>
-    <li><a href="#tabs-route" onclick="alert('hi');">NearBy&nbsp;<font size="4"  color="blue"><sup style="BACKGROUND-COLOR: LightGreen">New*</sup></font></a></li>
+    <li><a href="#tabs-route" onclick="plotRoutes()">NearBy&nbsp;<font size="4"  color="blue"><sup style="BACKGROUND-COLOR: LightGreen">New*</sup></font></a></li>
   </ul>
   <div id="tabs-heat">
     
     <!-- <p>Heat Map</p> -->
   </div>
   <div id="tab-details">
-  <p>Please select a category and city to populate this section</p>
-    <!-- <p>Details</p> -->
-  </div>
-  <div id="tab-details">
+  <p>Please select category and city for this tab</p>
     <!-- <p>Details</p> -->
   </div>
   <div id="tabs-friends">
     <p>Sorry...This feature is only available to Facebook Users</p>
+  </div>
+   <div id="tab-route">
+    <!-- <p>Details</p> -->
   </div>
 </div>
 					

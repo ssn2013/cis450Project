@@ -38,6 +38,16 @@
    </servlet-mapping>
    
    <servlet>
+     <servlet-name>Routes</servlet-name>
+      <jsp-file>/route.html</jsp-file> 
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>Routes</servlet-name>
+     <url-pattern>/route.html</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
      <servlet-name>SearchServlet</servlet-name>
      <servlet-class>com.datformers.servlet.Search</servlet-class> 
    </servlet>

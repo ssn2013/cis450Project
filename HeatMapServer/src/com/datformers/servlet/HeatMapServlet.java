@@ -18,23 +18,24 @@ public class HeatMapServlet extends HttpServlet {
 	private OracleDBWrapper dbWrapper = new OracleDBWrapper(DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,DatabaseUtil.PASSWORD);	
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("SERVLET GOT CALL"+request.getPathInfo());
+		//System.out.println("SERVLET GOT CALL"+request.getPathInfo());
 		
-		String keys[] = {"latitude","longitude","check_in_info","points1"};
+		String keys[] = {"latitude","longitude","name","check_in_info","points1"};
 		if(request.getPathInfo()!=null && request.getPathInfo().contains("points1")) {
 			//Connect to database
 			String city = request.getParameter("city");
 			String category = request.getParameter("category");
-			System.out.println("Got request for: "+city+" and category: "+category);
-			System.out.println(city + ":");
-			String queryString = "select business.latitude,business.longitude,c.check_in_info "
+			//System.out.println("Got request for: "+city+" and category: "+category);
+			//System.out.println(city + ":");
+			String queryString = "select business.latitude,business.longitude,business.name,c.check_in_info "
 					+ "from business "
 					+ "inner join categories "
 					+ "on categories.bid = business.bid "
 					+ "inner join checkin c "
 					+ "on c.bid = business.bid "
 					+ "where business.city='" + city 
-					+ "' and categories.category='"+category +"'";
+					+ "' and categories.category='"+category +"'"
+					+"order by c.check_in_info DESC";
 			System.out.println("QString: "+queryString);
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			if(set==null) {
@@ -47,11 +48,13 @@ public class HeatMapServlet extends HttpServlet {
 			int count = 0;
 			try {
 				while(set.next()) {
+					System.out.println("AHHHH>");
 					count++;
 					JSONObject obj = new JSONObject();
 					obj.put(keys[0], set.getDouble(keys[0]));
 					obj.put(keys[1], set.getDouble(keys[1]));
-					obj.put(keys[2],  set.getInt(keys[2]));
+					obj.put(keys[3],  set.getInt(keys[3]));
+					obj.put(keys[2],  set.getString(keys[2]));
 							
 					array.add(obj);
 				}
@@ -72,7 +75,7 @@ public class HeatMapServlet extends HttpServlet {
 			double longitude[] = {-80.05998,-80.073426,-80.0889587402344,-79.9865459,-80.06235,-80.07249,-80.055464,-80.065652,-80.077006,-80.0575565,-79.931884,-79.920642,-79.9145,-79.926611,-79.922481,-79.924269,-79.921053,-79.924717,-79.9259794,-79.9251169,-79.9229971,-79.922447,-79.9148356,-79.9100009,-79.925517,-79.9238313,-79.9252199,-79.926487,-79.918862,-79.9185679,-79.9255146,-79.9180322,-79.9250618,-79.9251176,-79.921901,-79.9316767,-79.9187095,-79.9313671,-79.9251969,-79.9256896,-79.919627,-79.9274944,-79.9259052,-79.925241,-79.922397,-79.933126,-79.9254969,-79.9250911,-79.9251182,-79.9251969,-79.928830198608,-79.928355,-79.923615,-79.925436,-79.9336632,-79.9211464,-79.924797,-79.935388,-79.9252056,-79.9143225,-79.90508,-79.8954753,-79.898855609787,-79.895957,-79.895957,-79.9084721005249,-79.9275276,-79.9012971,-79.987783,-79.9996304512024,-79.9558863,-79.987206,-79.9877685,-79.9934656,-79.992815,-79.981359,-79.9866014,-79.9866275,-79.986911,-79.98718,-79.996225,-79.9968169,-79.9972486,-79.98224,-80.0013672,-79.9997426,-79.999815,-79.9981189,-79.9992711,-79.9981452,-79.9606482,-80.0088714,-80.006512,-80.0190648,-79.994957,-79.9821671,-80.018213,-79.9495881,-79.9907425,-80.0070383,-80.0015054,-80.0105349,-80.0009426,-80.0005142,-79.999162,-80.0012052,-80.0126074,-80.0065429,-80.001199,-80.0042395,-80.0066578388214,-80.0008071,-80.014446,-80.0153356,-79.9993338,-80.0040779,-80.0042488,-79.983936,-80.010841,-79.9621242834648,-80.0354937,-80.0302515,-80.0414427,-80.0416964,-80.0414027,-80.018177,-80.0297492,-80.037826,-80.0350352,-80.034704,-80.0464255,-80.0342686,-80.0343,-80.031761,-80.0434133,-80.0445647,-80.0294805,-80.024957,-80.0339862,-80.049448,-80.049921,-80.0345551,-80.0352133,-80.0347424,-80.030114,-80.030322,-80.041926,-80.0500275,-80.0433063,-80.033585,-80.0466445,-79.9534393,-80.039142,-80.029239,-80.0409102,-80.036197,-80.0348023,-80.0357966,-80.033232,-80.049821,-80.030114,-80.030114,-80.03063,-80.024985,-80.0499034,-80.049779};
 			String city = request.getParameter("city");
 			String category = request.getParameter("category");
-			System.out.println("Got request for: "+city);
+			//System.out.println("Got request for: "+city);
 			JSONArray array = new JSONArray();
 			for(int i=0; i<latitude.length; i++) {
 				JSONObject obj = new JSONObject();

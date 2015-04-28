@@ -1,0 +1,226 @@
+<!--
+	Prologue by HTML5 UP
+	html5up.net | @n33co
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<%@ page import="java.io.*,java.util.*, java.io.IOException, java.sql.ResultSet, java.sql.SQLException, java.util.ArrayList, java.util.Calendar, java.util.HashMap, javax.servlet.http.HttpServlet, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.json.JSONException, org.json.JSONObject, org.json.simple.JSONArray, com.datformers.ReviewSummary.ReviewSummary, com.datformers.database.OracleDBWrapper, com.datformers.utils.DatabaseUtil,java.io.BufferedReader,java.io.FileInputStream,java.io.IOException,java.io.InputStreamReader" %>
+<html>
+	<%float lat1=39.9528654f;
+	  float long1=-75.1910946f;
+	  float lat2=0.0f;
+	  float long2=0.0f;
+	  String close = "";
+	  String name = "";
+	  String city = "";
+	  String distance="";
+	  String time="";%>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
+<body>
+<%
+		String lt1 = request.getParameter("lat1");
+		String lng1 = request.getParameter("lon1");
+		//String lt2 = request.getParameter("lat2");
+		//String lng2 = request.getParameter("lon2");
+		try {
+  				lat1 = Float.valueOf(lt1.trim()).floatValue();
+  				long1 = Float.valueOf(lng1.trim()).floatValue();
+  				System.out.println("Current Loc"+lat1 + ":" +lat1);
+  			
+			}
+			
+		catch (NumberFormatException nfe) 
+		{
+  			System.err.println("NumberFormatException: " + nfe.getMessage());
+  		}
+  		OracleDBWrapper dbWrapper = new OracleDBWrapper(
+			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
+			DatabaseUtil.PASSWORD);
+		HashMap<Integer, String> days = new HashMap<Integer, String>();
+		days.put(1, "Sunday");
+		days.put(2, "Monday");
+		days.put(3, "Tuesday");
+		days.put(4, "Wednesday");
+		days.put(5, "Thursday");
+		days.put(6, "Friday");
+		days.put(7, "Saturday");
+		
+		Calendar calendar = Calendar.getInstance();
+		int day = calendar.get(Calendar.DAY_OF_WEEK);
+		String lookingFor=days.get(day);
+		
+		String bid = request.getParameter("bid");
+		
+		System.out.println("++++++" +bid);
+		String queryString = "select business.latitude, business.longitude,business.city, business.name,businesshours.CLOSE_TIME "
+				+ "from business inner join businesshours on businesshours.BID = business.bid "
+				+ "where business.bid='"+bid+"' and businesshours.DAY='"+lookingFor+"'";
+				
+		System.out.println("=====" +queryString);
+		ResultSet set = dbWrapper.executeQuery(queryString);
+		System.out.println("=====executed");
+		try {
+			while(set.next()){
+			System.out.println("=====entered while loop");
+				String lat = set.getString("latitude");
+				lat2 =  Float.valueOf(lat).floatValue();
+				System.out.println("=====" +lat2);
+				String lon = set.getString("longitude");
+				long2 =  Float.valueOf(lon).floatValue();
+				System.out.println("=====" +long2);
+				name=set.getString("name");
+				System.out.println("=====name" +name);
+				close=set.getString("CLOSE_TIME");
+				System.out.println("=====close" +close);
+				city = set.getString("city");
+				System.out.println("=====city" +city);
+				
+			}
+			if(close.equals(0)){
+				
+			}
+		}
+		catch(Exception e){
+			
+		}
+		
+%>
+<script type="text/javascript">
+
+    var markers = [
+            {
+                "lat": "<%=lat1%>",
+                "lng": "<%=long1%>",
+                "description": "Philadelphia"
+            }
+        ,
+            {
+        		"lat": "<%=lat2%>",
+            	"lng": "<%=long2%>",
+            	"description": "<%=city+":"+name%>"
+               
+            }
+         
+    ];
+    var distance = "";
+	var time = "";
+	var origin = new google.maps.LatLng(markers[0].lat, markers[0].lng);
+	var destination = new google.maps.LatLng(markers[1].lat, markers[1].lng);
+	
+    window.onload = function () {
+    	
+    	var destinationIcon = 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=D|FF0000|000000';
+    	var originIcon = 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=O|FFFF00|000000';
+        var mapOptions = {
+            center: new google.maps.LatLng(markers[0].lat, markers[0].lng),
+            zoom: 10,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+        var infoWindow = new google.maps.InfoWindow();
+        var lat_lng = new Array();
+        var latlngbounds = new google.maps.LatLngBounds();
+        for (i = 0; i < markers.length; i++) {
+        	var icon;
+        	  if (i==1) {
+        	    icon = destinationIcon;
+        	  } else {
+        	    icon = originIcon;
+        	  }
+        	//calculateDistances();
+            var data = markers[i]
+            var myLatlng = new google.maps.LatLng(data.lat, data.lng);
+            lat_lng.push(myLatlng);
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                icon: icon
+            });
+            latlngbounds.extend(marker.position);
+            (function (marker, data) {
+                google.maps.event.addListener(marker, "click", function (e) {
+                    infoWindow.setContent(data.description);
+                    infoWindow.open(map, marker);
+                });
+            })(marker, data);
+        }
+        map.setCenter(latlngbounds.getCenter());
+        map.fitBounds(latlngbounds);
+ 
+        //***********ROUTING****************//
+ 
+        //Initialize the Path Array
+        var path = new google.maps.MVCArray();
+ 
+        //Initialize the Direction Service
+        var service = new google.maps.DirectionsService();
+ 
+        //Set the Path Stroke Color
+        var poly = new google.maps.Polyline({ map: map, strokeColor: '#4986E7' });
+ 
+        //Loop and Draw Path Route between the Points on MAP
+        for (var i = 0; i < lat_lng.length; i++) {
+            if ((i + 1) < lat_lng.length) {
+                var src = lat_lng[i];
+                var des = lat_lng[i + 1];
+                path.push(src);
+                poly.setPath(path);
+                service.route({
+                    origin: src,
+                    destination: des,
+                    travelMode: google.maps.DirectionsTravelMode.DRIVING
+                }, function (result, status) {
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        for (var i = 0, len = result.routes[0].overview_path.length; i < len; i++) {
+                            path.push(result.routes[0].overview_path[i]);
+                        }
+                    }
+                });
+            }
+        }
+       
+        calculateDistances();
+        //alert(distance + " " + time);
+    }
+    function calculateDistances() {
+    	//alert("Calculate Distance");
+      	var service = new google.maps.DistanceMatrixService();
+      	service.getDistanceMatrix(
+        {
+          	origins: [origin],
+          	destinations: [destination],
+          	travelMode: google.maps.TravelMode.DRIVING,
+          	unitSystem: google.maps.UnitSystem.METRIC,
+          	avoidHighways: false,
+         	 avoidTolls: false
+        	}, callback);
+    	}
+    	
+    	function callback(response, status) {
+    		//alert("Get status");
+    		  if (status != google.maps.DistanceMatrixStatus.OK) {
+    		    alert('Error was: ' + status);
+    		  } else {
+    		    var origins = response.originAddresses;
+    		    var destinations = response.destinationAddresses;
+    		    for (var i = 0; i < origins.length; i++) {
+    		      var results = response.rows[i].elements;
+    		      addMarker(origins[i], false);
+    		      for (var j = 0; j < results.length; j++) {
+    		        
+    		    	distance = results[j].distance.text ;
+    		            time = results[j].duration.text;
+    		        	//alert(distance +":" + time);
+    		      }
+    		    }
+    		  }
+    		}
+
+
+</script>
+<div id="dvMap" style="width: 1300px; height: 1000px">
+</div>
+</body>
+</html>
+
+</html>
