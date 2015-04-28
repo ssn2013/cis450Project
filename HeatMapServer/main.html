@@ -105,7 +105,7 @@
 	}
 	
 	function initialize() {
-		var cityVal = "Las Vegas ";
+		var cityVal = "Las Vegas";
 		var categoryVal = "Restaurants";
 		xmlhttp = new XMLHttpRequest();
 		url = "heatmap/points1?city=" + cityVal + "&category=" + categoryVal;
@@ -492,7 +492,7 @@
 								<li><div align="center"><select id="citySelect" style="width: 150px">
 														<%
 							while (rsCity.next()) {
-							if (rsCity.getString("city").equals("Las Vegas ")){
+							if (rsCity.getString("city").equals("Las Vegas")){
 						%>
 						<option selected value="<%=rsCity.getString("city")%>"><%=rsCity.getString("city")%></option>
 						<%
@@ -585,13 +585,14 @@
     <!-- <p>Heat Map</p> -->
   </div>
   <div id="tab-details">
+  <p>Please select a category and city to populate this section</p>
     <!-- <p>Details</p> -->
   </div>
   <div id="tab-details">
     <!-- <p>Details</p> -->
   </div>
   <div id="tabs-friends">
-    <p>Friends</p>
+    <p>Sorry...This feature is only available to Facebook Users</p>
   </div>
 </div>
 					
