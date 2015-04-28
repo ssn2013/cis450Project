@@ -60,6 +60,9 @@ public class LoginServlet extends HttpServlet {
 				} else {
 					System.out.println("Login Failed!!");
 					out.println("<html><head><body><h3>Invalid credentials!!</h3></body></head>");
+					out.flush();	
+					tmp.closeDb();
+					return;
 				}
 				tmp.closeDb();
 			
