@@ -35,6 +35,7 @@
   
   
   <script>
+  var counter=1;
   $(function() {
     $( "#tabs" ).tabs();
   });
@@ -91,14 +92,14 @@
 			new google.maps.LatLng(37.751266, -122.403355) ];
 	var pointArray
 	
-	function giveThisGuyAName(index) {
+	function giveThisGuyAName() {
 		var active = $("#tabs").tabs( "option", "active" );
 		//alert("ACTIVE TAB: "+active);
 		//if(active==0) {
 			//alert("Calling Reload );
 			reloadMap();
 		//} else if(active==1) {
-			reloadTab(index);
+			reloadTab();
 		//} else if(active==2) {
 		//	alert("Friends!!");
 		//}
@@ -372,19 +373,20 @@
 	//Details tab 
 	var categoryItems, heatmap;
 
-	function reloadTab(index) {
+	function reloadTab() {
+
 		var xmlhttp;
 		var cityVal = document.getElementById("citySelect").value;
 		var categoryVal = document.getElementById("categorySelect").value;
-
+		
 		xmlhttp=new XMLHttpRequest();
-		url="list?city="+cityVal+"&category="+categoryVal+"&index="+index;
+		url="list?city="+cityVal+"&category="+categoryVal+"&index="+counter;
 		xmlhttp.onreadystatechange=function() {
 			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
 				var responseObj = JSON.parse(xmlhttp.responseText); 
 				var categoryItems = responseObj.items;
 				//code to display data
-				var detailsTab = document.getElementById("tab-details");
+				var detailsTab = document.getElementById("tabs-details");
 				detailsTab.innerHTML = "";
 				for(var i = 0; i < categoryItems.length; i++) {
 					var record = document.createElement("p");
@@ -456,8 +458,7 @@
     			div.align="center";
     			var but = document.createElement("button");
     			but.type="button";
-    			var c=+index+5;
-    			var tmp="giveThisGuyAName("+c+")";
+    			var tmp="var c=parseInt(counter)+5;counter=c;giveThisGuyAName()";
     			but.setAttribute("onClick",tmp);
     			but.innerHTML="More";
     			div.appendChild(but);
@@ -538,7 +539,7 @@
 				var responseObj = JSON.parse(xmlhttp.responseText); 
 				var categoryItems = responseObj.items;
 				//code to display data
-				var detailsTab = document.getElementById("tab-route");
+				var detailsTab = document.getElementById("tabs-route");
 				detailsTab.innerHTML = "";
 				for(var i = 0; i < categoryItems.length; i++) {
 					var record = document.createElement("p");
@@ -706,7 +707,7 @@
 					}
 				%>
 				</li>
-								 <li><div align="center"><button type="button" onclick="giveThisGuyAName(1)">Get Content</button></div><li/>
+								 <li><div align="center"><button type="button" onclick="giveThisGuyAName()">Get Content</button></div><li/>
 								
 								 <li><div align="center"><input name="logout" style="top: 30px;" type="button" onclick="location.href='index.html'" value="Logout" /></div></li>
 
@@ -756,7 +757,7 @@
 					<div id="tabs">
   <ul>
     <li><a href="#tabs-heat">Heat Map</a></li>
-    <li><a href="#tab-details">Details</a></li>
+    <li><a href="#tabs-details" onclick="reloadTab()">Details</a></li>
     <li><a href="#tabs-friends" onclick="loadFriendsCheckins()">Friends</a></li>
     <li><a href="#tabs-route" onclick="plotRoutes()">NearBy&nbsp;<font size="4"  color="blue"><sup style="BACKGROUND-COLOR: LightGreen">New*</sup></font></a></li>
   </ul>
@@ -764,14 +765,14 @@
     
     <!-- <p>Heat Map</p> -->
   </div>
-  <div id="tab-details">
+  <div id="tabs-details">
   <p>Please select category and city for this tab</p>
     <!-- <p>Details</p> -->
   </div>
   <div id="tabs-friends">
     <p>Sorry...This feature is only available to Facebook Users</p>
   </div>
-   <div id="tab-route">
+   <div id="tabs-route">
     <!-- <p>Details</p> -->
   </div>
 </div>
