@@ -71,12 +71,13 @@ public class ListingServlet extends HttpServlet {
 		
 		
 		ResultSet set = dbWrapper.executeQuery(queryString);
+		
 		JSONArray ja = new JSONArray();
 
 		if(mdb==null) {
-			mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
+			mdb = new MongoDBWrapper(DatabaseUtil.MongoIP, 27017,
 				"Reviews");
-			mdb.createConnection();
+			//mdb.createConnection();
 		}
 		try {
 			while (set.next()) {
@@ -103,6 +104,7 @@ public class ListingServlet extends HttpServlet {
 			}
 			JSONObject mainObj = new JSONObject();
 			mainObj.put("items", ja);
+			
 			response.setContentType("application/json");
 			response.getWriter().println(mainObj.toString());
 			

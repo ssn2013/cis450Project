@@ -100,7 +100,10 @@ public class HeatMapServlet extends HttpServlet {
 			}
 		}
 	}
-	
+	@Override
+	public void destroy() {
+		dbWrapper.deregister();
+	}
 	@Override 
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		

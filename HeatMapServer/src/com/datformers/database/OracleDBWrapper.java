@@ -1,6 +1,7 @@
 package com.datformers.database;
 
 import java.sql.*;
+import java.util.Enumeration;
 
 
 public class OracleDBWrapper {
@@ -52,6 +53,19 @@ public class OracleDBWrapper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public void deregister() {
+		Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            try {
+                DriverManager.deregisterDriver(driver);
+               
+            } catch (SQLException e) {
+               
+            }
+
+        }
 	}
 	public static void main(String[] args) {
 		try {

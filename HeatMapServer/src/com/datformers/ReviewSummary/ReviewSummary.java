@@ -38,9 +38,9 @@ public class ReviewSummary {
 		ArrayList<String> reviews = new ArrayList<String>();
 		try {
 
-			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
+			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.MongoIP, 27017,
 					"Reviews");
-			mdb.createConnection();
+			//mdb.createConnection();
 
 			BasicDBObject Query = new BasicDBObject();
 			Query.put("business_id", this.businessID);
