@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Formatter;
 
 import javax.servlet.http.HttpServlet;
@@ -41,22 +42,24 @@ public class LoginServlet extends HttpServlet {
 				String isValidPwd = "";
 				response.setContentType("text/html");
 				PrintWriter out = response.getWriter();
-				System.out.println("user:pwd" + username + password);
+				
 				if (username.isEmpty() || password.isEmpty()) {
 					out.println("<html><head><body><p>A mandatory field is empty!<p></body></head>");
 					System.out.println("EMPTY");
 					return;
 				}
 				AddAppUser tmp = null;
-				String query = "Select password from APPUSER where email LIKE '"
-						+ username + "'";
-				System.out.println(query);
-				tmp = new AddAppUser(query);
+				String query = "Select password from APPUSER where email=?";
+//						+ username + "'";
+				
+				ArrayList<String> params=new ArrayList<String>();
+				params.add(username);
+				tmp = new AddAppUser(query,params);
 				ResultSet res = tmp.addUser();
 				
 				if (res.next()) {
 					isValidPwd = res.getString("password");
-					System.out.println(isValidPwd);
+					
 				}
 				
 				password=encryptPassword(password);
@@ -101,10 +104,12 @@ public class LoginServlet extends HttpServlet {
 					// System.out.println("<html><head><body><p>A mandatory field is empty!<p></body></head>");
 
 				} else {
-					String query = "SELECT count(*) as cnt FROM APPUSER WHERE email LIKE '"
-							+ email + "'";
+					String query = "SELECT count(*) as cnt FROM APPUSER WHERE email=?";
+//							+ email + "'";
 					// System.out.println("Signup query" + query);
-					AddAppUser add = new AddAppUser(query);
+					ArrayList<String> params=new ArrayList<String>();
+					params.add(email);
+					AddAppUser add = new AddAppUser(query,params);
 					ResultSet res = add.addUser();
 					int count = 0;
 					if (res.next()) {
@@ -112,16 +117,18 @@ public class LoginServlet extends HttpServlet {
 					}
 					
 					add.closeDb();
-					System.out.println("Signup query" + query);
+					
 					if (count > 0) {
 						// System.out.println("Already Registered");
 						out.println("<html><head><body><p>This email id is already registered!!</p></body></head>");
 					} else {
 						// System.out.println("Registering!");
+						params=new ArrayList<String>();
+						params.add(email);
 						String query1 = "Insert into APPUSER(USER_ID,EMAIL,PASSWORD,FIRST_NAME,LAST_NAME,IS_FACEBOOK_LOGIN)"
-								+ " values (usr_id.NEXTVAL,'"
-								+ email
-								+ "','"
+								+ " values (usr_id.NEXTVAL,?"
+//								+ email
+								+ ",'"
 								+ encrypt
 								+ "','"
 								+ first
@@ -130,7 +137,7 @@ public class LoginServlet extends HttpServlet {
 								+ "','"
 								+ isFbLogin + "')";
 						// System.out.println(query1);
-						AddAppUser tmp = new AddAppUser(query1);
+						AddAppUser tmp = new AddAppUser(query1,params);
 						tmp.addUser();
 						tmp.closeDb();
 						response.sendRedirect("main.html");
