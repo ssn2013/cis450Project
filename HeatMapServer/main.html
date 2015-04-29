@@ -95,14 +95,14 @@
 	function giveThisGuyAName() {
 		var active = $("#tabs").tabs( "option", "active" );
 		//alert("ACTIVE TAB: "+active);
-		//if(active==0) {
+		if(active==0) {
 			//alert("Calling Reload );
 			reloadMap();
-		//} else if(active==1) {
+		} else if(active==1) {
 			reloadTab();
-		//} else if(active==2) {
+		} else if(active==2) {
 			loadFriendsCheckins()
-		//}
+		}
 	}
 	
 	function initialize() {
@@ -173,21 +173,6 @@
 
 		heatmap.setMap(map);*/
 	}
-	
-	function addMarker(topChekinPoints) {
-		  // alert(topChekinPoints.length);
-		   var infoWindow = new google.maps.InfoWindow();
-		    for (var i = 0; i < topChekinPoints.length; i++){
-		    	var myLatlng = new google.maps.LatLng(topChekinPoints[i].latitude,topChekinPoints[i].longitude);	
-		    	 //alert(topChekinPoints[i].latitude+":"+topChekinPoints[i].longitude+":"+topChekinPoints[i].check_in_info);
-		    	 var marker = new google.maps.Marker({
-				    position: myLatlng,
-					map: map,
-					title:"Name:" + topChekinPoints[i].name + "; CheckIns:" + topChekinPoints[i].check_in_info
-					});   
-			}
-		}
-	
 	
 	function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
 		  var R = 6371; // Radius of the earth in km
@@ -268,9 +253,16 @@
 
 				pointArray = new google.maps.MVCArray(newMapPointsArray);
 				heatmap.setData(pointArray);
-				map.setCenter(new google.maps.LatLng(latSum/pointsArray.length,
-						lonSum/pointsArray.length));
-				addMarker(topChekinPoints,map);
+				if(pointsArray.length==0) {
+					alert("No data for said query");
+					for(var i =0; i<topCheckinPointsMarkers.length; i++) {
+						topCheckinPointsMarkers[i].setMap(null);
+					}
+					topCheckinPointsMarkers = [];
+				} else {
+					map.setCenter(new google.maps.LatLng(latSum/pointsArray.length,	lonSum/pointsArray.length));
+					addMarker(topChekinPoints,map);
+				}
 			}
 		}
 		xmlhttp.open("GET", url, true);
@@ -278,6 +270,7 @@
 		
 	}
 	
+	var topCheckinPointsMarkers = []	
 	function addMarker(topChekinPoints) {
 	   // alert(topChekinPoints.length);
 	   var infoWindow = new google.maps.InfoWindow();
@@ -289,13 +282,13 @@
 				map: map,
 				title:"Name:" + topChekinPoints[i].name + "; CheckIns:" + topChekinPoints[i].check_in_info
 				});   
+			topCheckinPointsMarkers.push(marker);				
 		}
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
 	var friendsCheckins;
-	var markers = [];
+	var markersForCheckin = [];
 	var infoWindows = [];
-	var marker;
 	var myLatlng;
 	function loadFriendsCheckins() {
 
@@ -327,9 +320,9 @@
 						friendsMap = new google.maps.Map(document.getElementById('tabs-friends'),	mapOptions);
 						addMarkersForCheckins(data, friendsMap);
 					}else {
-						for(var i=0; i<markers.length; i++)	
-							markers[i].setMap(null);
-						markers = [];
+						for(var i=0; i<markersForCheckin.length; i++)	
+							markersForCheckin[i].setMap(null);
+						markersForCheckin = [];
 						addMarkersForCheckins(data, friendsMap);
 					}
 				} else {
@@ -355,7 +348,7 @@
 				sumLat+=parseFloat(tags[i].latitude);
 				sumLong+=parseFloat(tags[i].longitude);
 				myLatlng = new google.maps.LatLng(parseFloat(tags[i].latitude),parseFloat(tags[i].longitude));
-				marker = new google.maps.Marker({
+				var marker = new google.maps.Marker({
    					position: myLatlng,
     				map: mapForMarker,
     				draggable:false,
@@ -363,12 +356,12 @@
     				title:tags[i].locationName+" (Checked in by: "+name+")"
 				});
 				
-				markers.push(marker);			
+				markersForCheckin.push(marker);			
 			
 			}
 		}
-		if(markers.length==0) {
-			alert("No results found");
+		if(markersForCheckin.length==0) {
+			alert("No data for said query");
 		} else {
 			mapForMarker.setCenter(new google.maps.LatLng((sumLat/count), (sumLong/count)));
 		}	
