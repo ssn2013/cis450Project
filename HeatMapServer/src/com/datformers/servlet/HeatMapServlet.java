@@ -39,7 +39,6 @@ public class HeatMapServlet extends HttpServlet {
 			System.out.println("QString: "+queryString);
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			if(set==null) {
-				System.out.println("AHHHH>");
 				return;
 			}
 			
@@ -48,7 +47,6 @@ public class HeatMapServlet extends HttpServlet {
 			int count = 0;
 			try {
 				while(set.next()) {
-					System.out.println("AHHHH>");
 					count++;
 					JSONObject obj = new JSONObject();
 					obj.put(keys[0], set.getDouble(keys[0]));
