@@ -101,7 +101,8 @@
 		//} else if(active==1) {
 			reloadTab();
 		//} else if(active==2) {
-		//	alert("Friends!!");
+			alert("Friends!!");
+			loadFriendsCheckins()
 		//}
 	}
 	
@@ -293,9 +294,13 @@
 	}
 	google.maps.event.addDomListener(window, 'load', initialize);
 	var friendsCheckins;
+	var markers = [];
+	var infoWindows = [];
+	var marker;
+	var myLatlng;
 	function loadFriendsCheckins() {
 
-		
+		alert("LOAD CHECKINS");
 		document.getElementById("tabs-friends").innerHtml ="Please wait...";				
 		var xmlhttp;
 
@@ -322,9 +327,15 @@
 							mapTypeId : google.maps.MapTypeId.ROADMAP,
 						};
 						friendsMap = new google.maps.Map(document.getElementById('tabs-friends'),	mapOptions);
-						addMarkersForCheckins(data, friendsMap)
+						addMarkersForCheckins(data, friendsMap);
 					}else {
-						
+						alert("ELSE CAUSE!!");
+						for(var i=0; i<markers.length; i++)	
+							markers[i].setMap(null);
+						markers = [];
+						addMarkersForCheckins(data, friendsMap);
+						alert("Add markers FINISHED");
+						google.maps.event.trigger(friendsMap, 'resize');
 					}
 				} else {
 					friendsDiv.innerHtml="This feature is not available";				
@@ -336,10 +347,6 @@
 		
 	}
 	
-	var markers = [];
-	var infoWindows = [];
-	var marker;
-	var myLatlng;
 	function addMarkersForCheckins(data, mapForMarker) {
 		var sumLat = 0;
 		var sumLong = 0;
@@ -366,7 +373,7 @@
 			}
 		}
 		mapForMarker.setCenter(new google.maps.LatLng((sumLat/count), (sumLong/count)));
-		
+		alert("AAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH, center set!");
 	}
   </script>
   <script>
