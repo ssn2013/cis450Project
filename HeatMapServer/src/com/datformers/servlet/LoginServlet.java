@@ -1,7 +1,11 @@
 package com.datformers.servlet;
 
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
+import java.util.Formatter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +56,11 @@ public class LoginServlet extends HttpServlet {
 				
 				if (res.next()) {
 					isValidPwd = res.getString("password");
+					System.out.println(isValidPwd);
 				}
+				
+				password=encryptPassword(password);
+				
 				if (password.equals(isValidPwd)) {
 					//out.println("<html><head><body><h3>Login Success!!</h3></body></head>");
 					response.sendRedirect("main.html");
@@ -81,6 +89,7 @@ public class LoginServlet extends HttpServlet {
 				String first = request.getParameter("firstname");
 				String last = request.getParameter("lastname");
 				String pwd = request.getParameter("password");
+				String encrypt=encryptPassword(pwd);
 				String email = request.getParameter("email");
 				String isFbLogin = "N";
 
@@ -113,7 +122,7 @@ public class LoginServlet extends HttpServlet {
 								+ " values (usr_id.NEXTVAL,'"
 								+ email
 								+ "','"
-								+ pwd
+								+ encrypt
 								+ "','"
 								+ first
 								+ "','"
@@ -134,5 +143,37 @@ public class LoginServlet extends HttpServlet {
 		} catch (Exception e) {
 
 		}
+	}
+	private static String encryptPassword(String password)
+	{
+	    String sha1 = "";
+	    try
+	    {
+	        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+	        crypt.reset();
+	        crypt.update(password.getBytes("UTF-8"));
+	        sha1 = byteToHex(crypt.digest());
+	    }
+	    catch(NoSuchAlgorithmException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    catch(UnsupportedEncodingException e)
+	    {
+	        e.printStackTrace();
+	    }
+	    return sha1;
+	}
+
+	private static String byteToHex(final byte[] hash)
+	{
+	    Formatter formatter = new Formatter();
+	    for (byte b : hash)
+	    {
+	        formatter.format("%02x", b);
+	    }
+	    String result = formatter.toString();
+	    formatter.close();
+	    return result;
 	}
 }

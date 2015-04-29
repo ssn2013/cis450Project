@@ -5,7 +5,7 @@
 	html5up.net | @n33co
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<%@ page import="java.io.*,java.util.*, java.io.IOException, java.sql.ResultSet, java.sql.SQLException, java.util.ArrayList, java.util.Calendar, java.util.HashMap, javax.servlet.http.HttpServlet, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.json.JSONException, org.json.JSONObject, org.json.simple.JSONArray, com.datformers.ReviewSummary.ReviewSummary, com.datformers.database.OracleDBWrapper, com.datformers.utils.DatabaseUtil,java.io.BufferedReader,java.io.FileInputStream,java.io.IOException,java.io.InputStreamReader" %>
+<%@ page import="com.mongodb.DBObject, com.mongodb.BasicDBObject, com.datformers.database.MongoDBWrapper, java.io.*,java.util.*, java.io.IOException, java.sql.ResultSet, java.sql.SQLException, java.util.ArrayList, java.util.Calendar, java.util.HashMap, javax.servlet.http.HttpServlet, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.json.JSONException, org.json.JSONObject, org.json.simple.JSONArray, com.datformers.ReviewSummary.ReviewSummary, com.datformers.database.OracleDBWrapper, com.datformers.utils.DatabaseUtil,java.io.BufferedReader,java.io.FileInputStream,java.io.IOException,java.io.InputStreamReader" %>
 
 <html>
 	<%float lati=0.0f;
@@ -169,6 +169,12 @@
 	OracleDBWrapper dbWrapper = new OracleDBWrapper(
 			DatabaseUtil.getURL(DatabaseUtil.IP), DatabaseUtil.UERNAME,
 			DatabaseUtil.PASSWORD);
+			MongoDBWrapper mdb=null;
+			if(mdb==null) {
+			mdb = new MongoDBWrapper(DatabaseUtil.MongoIP, 27017,
+				"Reviews");
+			//mdb.createConnection();
+		}
    HashMap<Integer, String> days = new HashMap<Integer, String>();
 		days.put(1, "Sunday");
 		days.put(2, "Monday");
@@ -231,10 +237,34 @@
 			
 			<%
 				reviews = ret.get(combinedReviews);
+				HashMap<String, String> ReviewUserMapping = new HashMap<String, String>();
 				for(int i=0;i<reviews.size();i++){ 
 					String id = reviews.get(i).split("\\$",2)[0];
-					idReviewMapping.put(id,reviews.get(i).split("\\$",2)[1]);
-					idDenseMapping.put(id, "0");
+					
+					BasicDBObject Query = new BasicDBObject();
+					Query.put("review_id", id);
+					BasicDBObject fields = new BasicDBObject();
+					fields.put("user_id", 1);
+					DBObject res = mdb.executeQueryFirst(Query, fields);
+					String user_id = String.valueOf(res.get("user_id"));
+					
+					String qString = "select * from YELPUSERS where user_id='"+user_id+"'";
+					ResultSet UserSet = dbWrapper.executeQuery(qString);
+					try {
+						String userDetails = "Name:   ";
+						while(UserSet.next()){
+							userDetails += UserSet.getString("NAME");
+							userDetails += "   Stars:   "+UserSet.getString("AVG_STARS");
+							userDetails += "   Fans:   "+UserSet.getString("FANS");
+							System.out.println(id+" "+userDetails);
+							ReviewUserMapping.put(id, userDetails);
+						}
+					}catch(Exception e){
+					
+					}
+					
+						idReviewMapping.put(id,reviews.get(i).split("\\$",2)[1]);
+						idDenseMapping.put(id, "0");
 					}
 					ServletContext context = getServletContext();
 					FileInputStream fstream = new FileInputStream(context.getRealPath("info_dense.txt"));
@@ -270,7 +300,7 @@
 					<%}	
 
 					%><br>
-
+					&nbsp;<u style="font-weight: bold; font-size: medium;"><%=ReviewUserMapping.get(pair.getKey()) %></u><br><br>
 					&nbsp;"<%=pair.getValue() %>"<br><br>
 					
 					
@@ -287,6 +317,7 @@
 			{
   			System.err.println("NumberFormatException: " + nfe.getMessage());
   			}
+  			mdb.closeConnection();
 			dbWrapper.closeConnection();
 		} catch (Exception e) {
 			e.printStackTrace();
