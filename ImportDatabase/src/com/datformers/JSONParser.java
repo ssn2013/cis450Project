@@ -25,7 +25,7 @@ public class JSONParser {
 		}
 		Connection connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:oracle:thin:@//158.130.111.16:1521/mydb.localhost", "system","Verna2813");
+			connection = DriverManager.getConnection("datformers.cvm5dbupuzl3.us-east-1.rds.amazonaws.com:1521/mydb.localhost", "admin","adminmaster");
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
