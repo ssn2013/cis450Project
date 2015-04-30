@@ -106,6 +106,7 @@
 	}
 	
 	function initialize() {
+		getLocation();
 		var cityVal = "Las Vegas";
 		var categoryVal = "Restaurants";
 		xmlhttp = new XMLHttpRequest();
@@ -508,8 +509,8 @@
 	
 	<script>
 	
-	var lat = 39.9500;
-	var lon = -75.1900;
+	var lat = 0.0;//39.9500;
+	var lon = 0.0;//-75.1900;
 	//var lat2 = 40.3955488;
 	//var lon2 = -80.0350933;
 	function getLocation() {
@@ -524,11 +525,11 @@
 	function showPosition(position) {
 	   //setTimeout("alert('Your Results will be retreived shortly. Please wait.....');", 5);
 	   //alert(position.coords.latitude + ":" + position.coords.longitude);
-	   //lat = position.coords.latitude;
-	   //lon = position.coords.longitude;	
+	   lat = position.coords.latitude;
+	   lon = position.coords.longitude;	
 	}
 	function plotRoutes(){
-		getLocation();	
+		//getLocation();	
 		reloadPoints(1);
 	}
 	

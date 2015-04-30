@@ -13,7 +13,8 @@
 	  String name = "";
 	  String city = "";
 	  String distance="";
-	  String time="";%>
+	  String time="";
+	  boolean isOpen=false;%>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&sensor=false"></script>
 <body>
@@ -61,24 +62,22 @@
 		System.out.println("=====executed");
 		try {
 			while(set.next()){
-			System.out.println("=====entered while loop");
+			//System.out.println("=====entered while loop");
 				String lat = set.getString("latitude");
 				lat2 =  Float.valueOf(lat).floatValue();
-				System.out.println("=====" +lat2);
+			//	System.out.println("=====" +lat2);
 				String lon = set.getString("longitude");
 				long2 =  Float.valueOf(lon).floatValue();
-				System.out.println("=====" +long2);
+			//	System.out.println("=====" +long2);
 				name=set.getString("name");
-				System.out.println("=====name" +name);
+				//System.out.println("=====name" +name);
 				close=set.getString("CLOSE_TIME");
-				System.out.println("=====close" +close);
+				//System.out.println("=====close" +close);
 				city = set.getString("city");
-				System.out.println("=====city" +city);
+				//System.out.println("=====city" +city);
 				
 			}
-			if(close.equals(0)){
-				
-			}
+			     
 		}
 		catch(Exception e){
 			
@@ -182,6 +181,34 @@
         calculateDistances();
         //alert(distance + " " + time);
     }
+    
+    function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    function startTime() {
+        var today = new Date();
+       // alert("=========" + today.getTime());
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+      
+        m = checkTime(m);
+        s = checkTime(s);
+      
+        var curTime = h + ":" + m;
+      //  alert(curTime);
+        return curTime;
+    }
+
+   /* function compareTime(var curTime, var closeTime) {
+        var n = closeTime.localeCompare(curTime);
+        retutn n;
+    }*/
+    
     function calculateDistances() {
     	//alert("Calculate Distance");
       	var service = new google.maps.DistanceMatrixService();
@@ -197,20 +224,51 @@
     	}
     	
     	function callback(response, status) {
-    		//alert("Get status");
+    		
     		  if (status != google.maps.DistanceMatrixStatus.OK) {
     		    alert('Error was: ' + status);
     		  } else {
+    			
     		    var origins = response.originAddresses;
     		    var destinations = response.destinationAddresses;
     		    for (var i = 0; i < origins.length; i++) {
     		      var results = response.rows[i].elements;
-    		      addMarker(origins[i], false);
     		      for (var j = 0; j < results.length; j++) {
     		        
     		    	distance = results[j].distance.text ;
-    		            time = results[j].duration.text;
-    		        	//alert(distance +":" + time);
+    		        time = results[j].duration.text;
+    		        var durLong = results[j].duration.value;
+    		        //alert(distance +":" + time + ":" + durLong + " "+"<%=close%>");
+    		        
+    		        
+    		        //
+    		        var t = new Date();
+    		       
+    		        var temp = t.getTime() + durLong*1000;
+    		       /* alert("From cur Time"+temp);
+    		        var today = new Date(temp);
+        			var h = today.getHours();
+        			var m = today.getMinutes();
+        			var s = today.getSeconds();
+        			m = checkTime(m);
+        			s = checkTime(s);
+        			var curTime = h + ":" + m;
+        			alert("From cur Time"+ curTime);*/
+        			
+        			var res = "<%=close%>".split(":");
+        			var closeTime = (res[0]*60*60 + res[1]*60)*1000;
+        			
+    		    	if("<%=close%>"=="0"){
+    					 alert("Distance from current location: " + distance +"\n" + "Time taken to cover the distance: " + time + "\n" + "Restaurant Close Time not available");
+    				}
+    				else{
+    					if(closeTime < temp){
+    						alert("Distance from current location: " + distance +"\n" + "Time taken to cover the distance: " + time + "\n" + "Restaurant Close Time:"+"<%=close%>" + "\n" + "You will not be able to reach before the restaurant close time!");
+    					}
+    					else{
+    						alert("Distance from current location: " + distance +"\n" + "Time taken to cover the distance: " + time + "\n" + "Restaurant Close Time:"+"<%=close%>"+ "\n" + "You will be able to reach before the restaurant close time!");
+    					}
+    				  }
     		      }
     		    }
     		  }
