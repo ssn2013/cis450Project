@@ -1,0 +1,17 @@
+submission 1 = production rules 83 (54), final = 73.2
+submission 2 = prod rules + dependency + top words = 87.2 (50.8), final = 75.6
+submission 3 = MRC + dependency = 84.2250190694 (53.8), final = 73.2
+submission 4 = MRC + top words + dependency + prod rules = 87.2898550725 (51.6)
+submission 5 = top words + dependency + prod rules + similarity matrix = 87.7295957285 (68.4211)
+submission 6 = MRC (new imp) + dep + prod rules = 84.7501906941 (53.2)
+submission 7 = MRC (old imp) + dep + prod rules = 85.9767353166 (54) final = 75.6
+submission 8 = MRC (old imp) + dep + prod_rules + top words + MI (3000 words)= 52% 
+
+submission 9 = dep + prod_rules + top words + MI (3000 words) = 52.8% final = 77.6 % 
+
+-------------------------------------------------------------------------------------------------
+
+
+
+
+ 
