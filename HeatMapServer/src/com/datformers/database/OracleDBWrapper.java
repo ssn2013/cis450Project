@@ -1,6 +1,7 @@
 package com.datformers.database;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 
@@ -38,6 +39,26 @@ public class OracleDBWrapper {
 		try {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+			return rs;
+	}
+	public ResultSet executeValidateQuery(String query,ArrayList<String> params) {
+		PreparedStatement  preparedStatement;
+
+		 ResultSet rs = null;
+		 
+		try {
+			preparedStatement=conn.prepareStatement(query) ;
+			for(int i=0;i<params.size();i++) {
+				preparedStatement.setString(i+1,params.get(i));	
+			}
+			
+			rs = preparedStatement.executeQuery();
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
