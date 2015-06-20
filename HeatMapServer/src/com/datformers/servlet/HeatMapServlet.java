@@ -36,7 +36,7 @@ public class HeatMapServlet extends HttpServlet {
 					+ "where business.city='" + city 
 					+ "' and categories.category='"+category +"'"
 					+"order by c.check_in_info DESC";
-			System.out.println("QString: "+queryString);
+			
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			if(set==null) {
 				return;

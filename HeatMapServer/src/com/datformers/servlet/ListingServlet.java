@@ -175,7 +175,7 @@ public class ListingServlet extends HttpServlet {
 			ResultSet set = dbWrapper.executeQuery(queryString);
 			JSONArray ja = new JSONArray();
 
-			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.IP, 27017,
+			MongoDBWrapper mdb = new MongoDBWrapper(DatabaseUtil.MongoIP, 27017,
 					"Reviews");
 			mdb.createConnection();
 			// System.out.println("++++" +queryString);
